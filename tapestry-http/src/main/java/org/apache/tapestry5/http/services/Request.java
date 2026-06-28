@@ -210,6 +210,15 @@ public interface Request
     String getRemoteHost();
 
     /**
+     * Returns the IP address of the client or last proxy that sent the request,
+     * always as a numeric address string (never a hostname).
+     *
+     * @return a <code>String</code> containing the IP address of the client that sent the request
+     * @since 5.10
+     */
+    String getRemoteAddr();
+
+    /**
      * Returns true if the request specified a session, and that session has been invalidated.
      *
      * @return true if session was invalidated during this request
