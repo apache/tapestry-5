@@ -37,7 +37,7 @@ public interface EsShimManager
      * @param compress a {@code boolean} to inform whether it's the compressed asset URL or not.
      * @return the request prefix.
      */
-    String getRequestPrefix(boolean compress);
+    String getDispatcherUrlPrefix(boolean compress);
     
     /**
      * Returns the full URL of a module.

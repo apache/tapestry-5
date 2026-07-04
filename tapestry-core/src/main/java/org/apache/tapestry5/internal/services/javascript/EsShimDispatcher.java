@@ -82,7 +82,7 @@ public class EsShimDispatcher implements Dispatcher
             throw new RuntimeException(e);
         }
 
-        requestPrefix = esShimManager.getRequestPrefix(compress);
+        requestPrefix = esShimManager.getDispatcherUrlPrefix(compress);
         requestPrefixLength = requestPrefix.length();
     }
 
@@ -90,11 +90,9 @@ public class EsShimDispatcher implements Dispatcher
     {
         String path = request.getPath();
         
-        int index = path.indexOf(requestPrefix);
-
-        if (index >= 0)
+        if (path.startsWith(requestPrefix))
         {
-            String extraPath = path.substring(index + requestPrefixLength);
+            String extraPath = path.substring(requestPrefix.length());
 
             if (!handleModuleRequest(extraPath, response))
             {
