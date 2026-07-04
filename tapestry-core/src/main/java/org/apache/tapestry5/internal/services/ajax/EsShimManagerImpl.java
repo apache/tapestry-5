@@ -41,6 +41,8 @@ public class EsShimManagerImpl implements EsShimManager
     
     private final String uncompressedRequestPrefix;
     
+    private final String urlPrefix;
+    
     public EsShimManagerImpl(Map<String, Resource> shims,
             PathConstructor pathConstructor,
             BaseURLSource baseURLSource,
@@ -54,8 +56,9 @@ public class EsShimManagerImpl implements EsShimManager
         this.pathConstructor = pathConstructor;
         this.baseURLSource = baseURLSource;
         this.request = request;
-        this.compressedRequestPrefix = getRequestPrefixUncached(true);
-        this.uncompressedRequestPrefix = getRequestPrefixUncached(false);
+        this.compressedRequestPrefix = getRequestPrefixUncached(true, false);
+        this.uncompressedRequestPrefix = getRequestPrefixUncached(false, false);
+        this.urlPrefix = getRequestPrefixUncached(true, true);
     }
 
     /**
@@ -69,20 +72,22 @@ public class EsShimManagerImpl implements EsShimManager
     }
     
     @Override
-    public String getRequestPrefix(boolean compress) 
+    public String getDispatcherUrlPrefix(boolean compress) 
     {
         return compress ? compressedRequestPrefix : uncompressedRequestPrefix;
     }
     
-    public String getRequestPrefixUncached(boolean compress)
+    public String getRequestPrefixUncached(boolean compress, boolean clientPath)
     {
-        return pathConstructor.constructDispatchPath(assetPrefix, (compress ? ES_SUBPATH + ".gz" : ES_SUBPATH)) + "/";
+        final String suffix = compress ? ES_SUBPATH + ".gz" : ES_SUBPATH;
+        return (clientPath ? pathConstructor.constructClientPath(assetPrefix, suffix) : 
+                pathConstructor.constructDispatchPath(assetPrefix, suffix)) + "/";
     }
 
     @Override
     public String getUrl(String moduleName) {
         return baseURLSource.getBaseURL(request.isSecure()) + 
-                getRequestPrefix(true) + moduleName + ".js";
+                urlPrefix + moduleName + ".js";
     }
     
 }
