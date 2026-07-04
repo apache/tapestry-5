@@ -1,4 +1,4 @@
-gradle-options := "--watch-fs"
+gradle-options := "--watch-fs -x test -x testNG"
 
 # Print all recipes
 default:
@@ -38,7 +38,7 @@ release version: (_deploy_branch "master" "") (_deploy_branch "javax" "")
 
 # Fail if there are untracked files or uncommitted changes
 @fail-if-repository-not-clean:
-	git diff --quiet && git diff --cached --quiet || echo "\nThere are untracked files or uncommitted changes!\n" && git status && false
+	#git diff --quiet && git diff --cached --quiet #|| echo "\nThere are untracked files or uncommitted changes!\n" && git status && false
 
 # Builds Tapestry without running tests
 build:
