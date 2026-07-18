@@ -76,6 +76,7 @@ import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.ClasspathAssetProtectionRule;
 import org.apache.tapestry5.services.ClasspathProvider;
 import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.ContextAssetProtectionRule;
 import org.apache.tapestry5.services.ContextProvider;
 import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
@@ -331,7 +332,8 @@ public class AssetsModule
                                                       ClasspathAssetAliasManager classpathAssetAliasManager,
                                                       ResourceStreamer streamer,
                                                       AssetSource assetSource,
-                                                      ClasspathAssetProtectionRule classpathAssetProtectionRule)
+                                                      ClasspathAssetProtectionRule classpathAssetProtectionRule,
+                                                      ContextAssetProtectionRule contextAssetProtectionRule)
     {
         Map<String, String> mappings = classpathAssetAliasManager.getMappings();
 
@@ -343,7 +345,7 @@ public class AssetsModule
         }
 
         configuration.add(RequestConstants.CONTEXT_FOLDER,
-                new ContextAssetRequestHandler(streamer, contextAssetFactory.getRootResource()));
+                new ContextAssetRequestHandler(streamer, contextAssetFactory.getRootResource(), contextAssetProtectionRule));
 
         configuration.add(RequestConstants.STACK_FOLDER, stackAssetRequestHandler);
 
@@ -421,7 +423,9 @@ public class AssetsModule
     }
     
     public static void contributeClasspathAssetProtectionRule(
-            OrderedConfiguration<ClasspathAssetProtectionRule> configuration) 
+            OrderedConfiguration<ClasspathAssetProtectionRule> configuration,
+            @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
+            boolean productionMode)
     {
         ClasspathAssetProtectionRule classFileRule = (s) -> s.toLowerCase().endsWith(".class");
         configuration.add("ClassFile", classFileRule);
@@ -433,9 +437,39 @@ public class AssetsModule
         configuration.add("TemplateFile", tmlFileRule);
         ClasspathAssetProtectionRule folderRule = (s) -> isFolderToBlock(s);
         configuration.add("Folder", folderRule);
+
+        // TAP5-2835: Don't serve source maps in production
+        if (productionMode)
+        {
+            ClasspathAssetProtectionRule mapFileRule = (s) -> s.toLowerCase().endsWith(".map");
+            configuration.add("MapFile", mapFileRule);
+        }
     }
-    
-    final private static boolean isFolderToBlock(String path) 
+
+    @Primary
+    public static ContextAssetProtectionRule buildContextAssetProtectionRule(
+            List<ContextAssetProtectionRule> rules, ChainBuilder chainBuilder)
+    {
+        return chainBuilder.build(ContextAssetProtectionRule.class, rules);
+    }
+
+    @Contribute(ContextAssetProtectionRule.class)
+    public static void contributeContextAssetProtectionRule(
+            OrderedConfiguration<ContextAssetProtectionRule> configuration,
+
+            @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
+            boolean productionMode)
+    {
+        // Source maps expose original, unminified source; don't let them leak out in production.
+        // Applications that want source maps served in production can override this contribution.
+        if (productionMode)
+        {
+            ContextAssetProtectionRule mapFileRule = (s) -> s.toLowerCase().endsWith(".map");
+            configuration.add("MapFile", mapFileRule);
+        }
+    }
+
+    final private static boolean isFolderToBlock(String path)
     {
         path = path.replace('\\', '/');
         final int lastIndex = path.lastIndexOf('/');
