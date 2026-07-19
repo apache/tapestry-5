@@ -397,9 +397,13 @@ public class SymbolConstants
 
     /**
      * A passphrase used as the basis of hash-based message authentication (HMAC) for any object stream data stored on
-     * the client.  The default phrase is the empty string, which will result in a logged runtime <em>error</em>.
-     * You should configure this to a reasonable value (longer is better) and ensure that all servers in your cluster
-     * share the same value (configuring this in code, rather than the command line, is preferred).
+     * the client. The passphrase must be at least 20 characters long (aligned with the RFC 2104 SHA-1 digest length).
+     * You should configure this to a strong, random value and ensure that all servers in your cluster share the same
+     * value (configuring this in code, rather than on the command line, is preferred).
+     *
+     * <p>In <strong>production mode</strong>, a missing or too-short passphrase causes a startup exception.
+     * In <strong>development mode</strong>, a warning is logged and a random per-startup fallback key is used instead,
+     * meaning client data will not survive server restarts.</p>
      *
      * @see org.apache.tapestry5.services.ClientDataEncoder
      * @since 5.3.6

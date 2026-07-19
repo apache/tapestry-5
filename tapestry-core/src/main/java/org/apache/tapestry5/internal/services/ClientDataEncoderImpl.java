@@ -1,4 +1,4 @@
-// Copyright 2009, 2012 The Apache Software Foundation
+// Copyright 2009, 2012, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
-import org.apache.tapestry5.http.internal.TapestryHttpInternalConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.util.Base64InputStream;
 import org.apache.tapestry5.internal.util.MacOutputStream;
@@ -30,43 +30,53 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.MessageDigest;
+import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
 public class ClientDataEncoderImpl implements ClientDataEncoder
 {
+    private static final int MIN_PASSPHRASE_LENGTH = 20;
+
     private final URLEncoder urlEncoder;
 
     private final Key hmacKey;
 
-    public ClientDataEncoderImpl(URLEncoder urlEncoder, @Symbol(SymbolConstants.HMAC_PASSPHRASE) String passphrase,
+    public ClientDataEncoderImpl(URLEncoder urlEncoder,
+                                 @Symbol(SymbolConstants.HMAC_PASSPHRASE) String passphrase,
                                  Logger logger,
-                                 @Symbol(TapestryHttpInternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
-                                 String applicationPackageName, AlertManager alertManager) throws UnsupportedEncodingException
+                                 AlertManager alertManager,
+                                 @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode)
     {
         this.urlEncoder = urlEncoder;
 
-        if (passphrase.equals(""))
+        // TAP5-2834: Also check for minimum length
+        if (StringUtils.isBlank(passphrase) || passphrase.length() < MIN_PASSPHRASE_LENGTH)
         {
-            String message = String.format("The symbol '%s' has not been configured. " +
-                    "This is used to configure hash-based message authentication of Tapestry data stored in forms, or in the URL. " +
-                    "You application is less secure, and more vulnerable to denial-of-service attacks, when this symbol is not configured.",
-                    SymbolConstants.HMAC_PASSPHRASE);
+            String message = String.format(
+                    "SymbolConstants.HMAC_PASSPHRASE '%s' has not been configured or is too short (minimum %d characters). " +
+                    "This is used to configure hash-based message authentication of Tapestry data stored in forms or in the URL. " +
+                    "Your application is less secure and more vulnerable to denial-of-service attacks when this symbol is not properly configured.",
+                    SymbolConstants.HMAC_PASSPHRASE, MIN_PASSPHRASE_LENGTH);
 
-            // Now to really get the attention of the developer!
+            if (productionMode)
+            {
+                throw new RuntimeException(message);
+            }
 
             alertManager.error(message);
-
             logger.error(message);
 
-            // Override the blank parameter to set a default value. Use the application package name,
-            // which is justly slightly more secure than having a fixed default.
-            passphrase = applicationPackageName;
+            // TAP5-2834: No longer fall back to application package, as it's easier to guess/deduct.
+            // As we disallow an empty passphrase in production, this should only become an issue
+            // if run in non-production in a clustered environment. and even then, the easy fix
+            // will be configuring a custom passphrase.
+            passphrase = UUID.randomUUID().toString();
         }
 
-        hmacKey = new SecretKeySpec(passphrase.getBytes("UTF8"), "HmacSHA1");
+        hmacKey = new SecretKeySpec(passphrase.getBytes(StandardCharsets.UTF_8), "HmacSHA1");
     }
 
     public ClientDataSink createSink()
@@ -127,7 +137,7 @@ public class ClientDataEncoderImpl implements ClientDataEncoder
 
         String actual = macOs.getResult();
 
-        if (!MessageDigest.isEqual(storedHmacResult.getBytes(), actual.getBytes()))
+        if (!MessageDigest.isEqual(storedHmacResult.getBytes(StandardCharsets.UTF_8), actual.getBytes(StandardCharsets.UTF_8)))
         {
             throw new IOException("Client data associated with the current request appears to have been tampered with " +
                     "(the HMAC signature does not match).");
