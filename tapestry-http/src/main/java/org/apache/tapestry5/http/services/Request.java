@@ -214,9 +214,11 @@ public interface Request
      * always as a numeric address string (never a hostname).
      *
      * @return a <code>String</code> containing the IP address of the client that sent the request
-     * @since 5.10
+     * @since 5.10.0
      */
-    String getRemoteAddr();
+    default String getRemoteAddr() {
+        return null;
+    }
 
     /**
      * Returns true if the request specified a session, and that session has been invalidated.
