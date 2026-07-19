@@ -80,7 +80,27 @@ If you need to use Underscore.js or jQuery, they're automatically available for 
 
 ---
 
-## Minor Improvements and Bugfixes
+# New/Changed Features
+
+*   TAP5-2826: allow null for render variables
+
+*   TAP5-2827: tapestry-code DOM Xpath support
+
+*   TAP5-2834: Hmac passphrase rules improved, fail on startup if too weak/empty
+
+*   TAP5-2835: ContextAssetProtectionRule chain added, do not serve source maps in prod
+
+---
+
+## Minor Improvements, Version Bumps, and Bugfixes
 
 *   `ConcurrentBarrier`:
     Possible starvation issue fixed (only a test issue, should occur in production).
+
+*   TAP5-2830: Automate ASM verndoring, bump to 9.9.1
+
+*   TAP5-2831: Jackson bum to 2.21.3
+
+*   TAP5-2836: Updating JavaScript libraries:
+    *   Require.js: 2.2.0 -> 2.3.8
+    *   Underscore.js: 1.13.7 -> 1.13.8
