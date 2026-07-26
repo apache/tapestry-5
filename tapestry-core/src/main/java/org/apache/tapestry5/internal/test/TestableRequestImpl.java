@@ -264,6 +264,16 @@ public class TestableRequestImpl implements TestableRequest
         return "localhost";
     }
 
+    /**
+     * Always returns "127.0.0.1".
+     *
+     * @since 5.10
+     */
+    public String getRemoteAddr()
+    {
+        return "127.0.0.1";
+    }
+
     public boolean isSessionInvalidated()
     {
         return false;
