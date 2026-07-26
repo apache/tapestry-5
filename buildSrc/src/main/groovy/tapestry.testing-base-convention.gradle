@@ -38,6 +38,19 @@ tasks.withType(Test).configureEach { testTask ->
         'selenium.wait.timeout': System.getProperty('selenium.wait.timeout', '15')
     )
 
+    // Integration tests default to 9090/8443 (see @TapestryTestConfiguration).
+    // The integration test mutex in tapestry.testng-convention keeps two suites from wanting them at the same time.
+    // These let a single run move off the defaults when something else on the machine holds them:
+    //   ./gradlew :tapestry-jpa:testNG -Dtapestry.port=9191 -Dtapestry.ssl-port=8544
+    // Gradle's -D only reaches the daemon, so they have to be forwarded to the workers explicitly.
+    // SeleniumTestCase reads them as a fallback when testng.xml declares no such parameter.
+    ['tapestry.port', 'tapestry.ssl-port'].each { key ->
+        def value = System.getProperty(key)
+        if (value != null) {
+            systemProperty key, value
+        }
+    }
+
     environment.LANG = 'en_US.UTF-8'
 
     testLogging {

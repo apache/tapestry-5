@@ -46,6 +46,16 @@ Configures every `Test` task in the project via `tasks.withType(Test)`:
 *   Standard system properties: file encoding, locale, CI flag, Selenium wait timeout
 *   Consistent test logging: full exception format, pass/skip/fail events, progress counter
 
+Integration tests bind 9090/8443 by default (`@TapestryTestConfiguration`).
+To move a single run off those ports, when something else on the machine already holds them:
+
+```bash
+./gradlew :tapestry-jpa:testNG -Dtapestry.port=9191 -Dtapestry.ssl-port=8544
+```
+
+Gradle's `-D` only reaches the daemon, so the convention forwards these two to the test workers.
+`SeleniumTestCase` reads them as a fallback when `testng.xml` declares no such parameter.
+
 ### `tapestry.junit5-convention`
 
 Use when the module's test sources use JUnit 5 Jupiter (`@Test`, `@ExtendWith`, ...).
@@ -130,6 +140,17 @@ tasks.named('check') {
 The `testng.xml` suite file for these modules should contain **only** integration `<test>` elements.
 
 Unit tests are handled by the `test` task via testng-engine by Jupiter and must not appear in `testng.xml`.
+
+The task **must** be named `testNG`: the convention gives every task with that name a permit on the
+`integrationTestMutex` build service, described below.
+A differently named task gets no permit and will race the others for the ports.
+
+#### Serializing integration tests
+
+Every Selenium suite binds the same ports, so no two may run at once.
+Rather than disabling parallel builds (not a simple flag on project-level), the convention registers
+an `IntegrationTestMutex` build service with `maxParallelUsages = 1` and declares it on each `testNG` task.
+Gradle then admits one integration test task at a time while compilation, asset generation and the unit test suites still run in parallel.
 
 ---
 
