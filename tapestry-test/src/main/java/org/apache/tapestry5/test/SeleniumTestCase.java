@@ -246,128 +246,162 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         final Runnable stopWebServer = launchWebServer(container, webAppFolder, contextPath, port, sslPort);
 
-        FirefoxDriverManager.firefoxdriver().setup();
+        FirefoxDriver driver = null;
 
-        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        FirefoxOptions options = new FirefoxOptions(desiredCapabilities); 
-
-        // TAP5-2819: Run headless on CI
-        if (Boolean.parseBoolean(System.getProperty("ci", "false")))
+        try
         {
-            options.addArguments("-headless", "--width=1920", "--height=1080");
-        }
+            FirefoxDriverManager.firefoxdriver().setup();
 
-        File ffProfileTemplate = new File(TapestryRunnerConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
-        // From https://forums.parasoft.com/discussion/5682/using-selenium-with-firefox-snap-ubuntu
-        String osName = System.getProperty("os.name");
-        String snapProfileRoot = osName.contains("Linux") && new File("/snap/firefox").exists()
-                ? createProfileRootInUserHome()
-                : null;
+            DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+            FirefoxOptions options = new FirefoxOptions(desiredCapabilities); 
 
-        FirefoxProfile profile;
-        if (ffProfileTemplate.isDirectory())
+            // TAP5-2819: Run headless on CI
+            if (Boolean.parseBoolean(System.getProperty("ci", "false")))
+            {
+                options.addArguments("-headless", "--width=1920", "--height=1080");
+            }
+
+            File ffProfileTemplate = new File(TapestryRunnerConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
+            // From https://forums.parasoft.com/discussion/5682/using-selenium-with-firefox-snap-ubuntu
+            String osName = System.getProperty("os.name");
+            String snapProfileRoot = osName.contains("Linux") && new File("/snap/firefox").exists()
+                    ? createProfileRootInUserHome()
+                    : null;
+
+            FirefoxProfile profile;
+            if (ffProfileTemplate.isDirectory())
+            {
+                LOGGER.info("Loading Firefox profile from: {}", ffProfileTemplate);
+                profile = new FirefoxProfile(ffProfileTemplate);
+            }
+            else if (snapProfileRoot != null)
+            {
+                File snapSafeDir = new File(snapProfileRoot, "tmp-profile");
+                snapSafeDir.mkdirs();
+                LOGGER.info("Creating Snap-compatible Firefox profile in: {}", snapSafeDir);
+
+                profile = new FirefoxProfile(snapSafeDir);
+                profile.setPreference("intl.accept_languages", "en,fr,de");
+            }
+            else
+            {
+                LOGGER.info("Using default Firefox profile");
+                profile = new FirefoxProfile();
+                profile.setPreference("intl.accept_languages", "en,fr,de");
+            }
+
+            options.setProfile(profile);
+
+            driver = snapProfileRoot != null
+                    ? new FirefoxDriver(createGeckoDriverService(snapProfileRoot), options)
+                    : new FirefoxDriver(options);
+
+            // Implicit waiting can interfere with WebDriverWait
+            // driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10L));
+
+            CommandProcessor webDriverCommandProcessor = new WebDriverCommandProcessor(baseURL, driver);
+
+            final ErrorReporterImpl errorReporter = new ErrorReporterImpl(driver, testContext);
+
+            ErrorReportingCommandProcessor commandProcessor = new ErrorReportingCommandProcessor(webDriverCommandProcessor,
+                    errorReporter);
+
+            Selenium selenium = new WebDriverBackedSelenium(driver, baseURL);
+
+            testContext.setAttribute(TapestryTestConstants.BASE_URL_ATTRIBUTE, baseURL);
+            testContext.setAttribute(TapestryTestConstants.SELENIUM_ATTRIBUTE, selenium);
+            testContext.setAttribute(TapestryTestConstants.ERROR_REPORTER_ATTRIBUTE, errorReporter);
+            testContext.setAttribute(TapestryTestConstants.COMMAND_PROCESSOR_ATTRIBUTE, commandProcessor);
+
+            testContext.setAttribute(TapestryTestConstants.SHUTDOWN_ATTRIBUTE, new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        LOGGER.info("Shutting down selenium client ...");
+
+                        try
+                        {
+                            selenium.stop();
+                        } catch (RuntimeException e)
+                        {
+                            LOGGER.error("Selenium client shutdown failure.", e);
+                        }
+
+                        LOGGER.info("Shutting down webdriver ...");
+
+                        try
+                        {
+                            if (webDriver != null) { // is sometimes null... but why?
+                                webDriver.quit();
+                            }
+                        } catch (RuntimeException e)
+                        {
+                            LOGGER.error("Webdriver shutdown failure.", e);
+                        }
+
+                        LOGGER.info("Shutting down selenium server ...");
+
+                        LOGGER.info("Shutting web server ...");
+
+                        try
+                        {
+                            stopWebServer.run();
+                        } catch (RuntimeException e)
+                        {
+                            LOGGER.error("Web server shutdown failure.", e);
+                        }
+
+                        // Output, at the end of the Test, any html capture or screen shots (this makes it much easier
+                        // to locate them at the end of the run; there's such a variance on where they end up based
+                        // on whether the tests are running from inside an IDE or via one of the command line
+                        // builds.
+
+                        errorReporter.writeOutputPaths();
+                    } finally
+                    {
+                        testContext.removeAttribute(TapestryTestConstants.BASE_URL_ATTRIBUTE);
+                        testContext.removeAttribute(TapestryTestConstants.SELENIUM_ATTRIBUTE);
+                        testContext.removeAttribute(TapestryTestConstants.ERROR_REPORTER_ATTRIBUTE);
+                        testContext.removeAttribute(TapestryTestConstants.COMMAND_PROCESSOR_ATTRIBUTE);
+                        testContext.removeAttribute(TapestryTestConstants.SHUTDOWN_ATTRIBUTE);
+                        testContext.removeAttribute(TapestryTestConstants.PAGE_LOAD_TIMEOUT_PARAMETER);
+                        testContext.removeAttribute(TapestryTestConstants.WEBDRIVER_WAIT_TIMEOUT_PARAMETER);
+                    }
+                }
+            });
+        } catch (Exception ex)
         {
-            LOGGER.info("Loading Firefox profile from: {}", ffProfileTemplate);
-            profile = new FirefoxProfile(ffProfileTemplate);
-        }
-        else if (snapProfileRoot != null)
-        {
-            File snapSafeDir = new File(snapProfileRoot, "tmp-profile");
-            snapSafeDir.mkdirs();
-            LOGGER.info("Creating Snap-compatible Firefox profile in: {}", snapSafeDir);
+            // Nothing has been stored in the test context yet, so testShutdown() has no way
+            // of cleaning up after a failure here. Release the browser and the web server now; otherwise
+            // the port stays bound for the rest of the JVM's life and every later <test> in the suite
+            // fails with "Failed to bind".
 
-            profile = new FirefoxProfile(snapSafeDir);
-            profile.setPreference("intl.accept_languages", "en,fr,de");
-        }
-        else
-        {
-            LOGGER.info("Using default Firefox profile");
-            profile = new FirefoxProfile();
-            profile.setPreference("intl.accept_languages", "en,fr,de");
-        }
+            LOGGER.error("Startup of the integration test environment failed; releasing resources.", ex);
 
-        options.setProfile(profile);
-
-        FirefoxDriver driver = snapProfileRoot != null
-                ? new FirefoxDriver(createGeckoDriverService(snapProfileRoot), options)
-                : new FirefoxDriver(options);
-
-        // Implicit waiting can interfere with WebDriverWait
-        // driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10L));
-
-        CommandProcessor webDriverCommandProcessor = new WebDriverCommandProcessor(baseURL, driver);
-
-        final ErrorReporterImpl errorReporter = new ErrorReporterImpl(driver, testContext);
-
-        ErrorReportingCommandProcessor commandProcessor = new ErrorReportingCommandProcessor(webDriverCommandProcessor,
-                errorReporter);
-
-        Selenium selenium = new WebDriverBackedSelenium(driver, baseURL);
-
-        testContext.setAttribute(TapestryTestConstants.BASE_URL_ATTRIBUTE, baseURL);
-        testContext.setAttribute(TapestryTestConstants.SELENIUM_ATTRIBUTE, selenium);
-        testContext.setAttribute(TapestryTestConstants.ERROR_REPORTER_ATTRIBUTE, errorReporter);
-        testContext.setAttribute(TapestryTestConstants.COMMAND_PROCESSOR_ATTRIBUTE, commandProcessor);
-
-        testContext.setAttribute(TapestryTestConstants.SHUTDOWN_ATTRIBUTE, new Runnable()
-        {
-            @Override
-            public void run()
+            if (driver != null)
             {
                 try
                 {
-                    LOGGER.info("Shutting down selenium client ...");
-
-                    try
-                    {
-                        selenium.stop();
-                    } catch (RuntimeException e)
-                    {
-                        LOGGER.error("Selenium client shutdown failure.", e);
-                    }
-
-                    LOGGER.info("Shutting down webdriver ...");
-
-                    try
-                    {
-                        if (webDriver != null) { // is sometimes null... but why?
-                            webDriver.quit();
-                        }
-                    } catch (RuntimeException e)
-                    {
-                        LOGGER.error("Webdriver shutdown failure.", e);
-                    }
-
-                    LOGGER.info("Shutting down selenium server ...");
-
-                    LOGGER.info("Shutting web server ...");
-
-                    try
-                    {
-                        stopWebServer.run();
-                    } catch (RuntimeException e)
-                    {
-                        LOGGER.error("Web server shutdown failure.", e);
-                    }
-
-                    // Output, at the end of the Test, any html capture or screen shots (this makes it much easier
-                    // to locate them at the end of the run; there's such a variance on where they end up based
-                    // on whether the tests are running from inside an IDE or via one of the command line
-                    // builds.
-
-                    errorReporter.writeOutputPaths();
-                } finally
+                    driver.quit();
+                } catch (RuntimeException e)
                 {
-                    testContext.removeAttribute(TapestryTestConstants.BASE_URL_ATTRIBUTE);
-                    testContext.removeAttribute(TapestryTestConstants.SELENIUM_ATTRIBUTE);
-                    testContext.removeAttribute(TapestryTestConstants.ERROR_REPORTER_ATTRIBUTE);
-                    testContext.removeAttribute(TapestryTestConstants.COMMAND_PROCESSOR_ATTRIBUTE);
-                    testContext.removeAttribute(TapestryTestConstants.SHUTDOWN_ATTRIBUTE);
-                    testContext.removeAttribute(TapestryTestConstants.PAGE_LOAD_TIMEOUT_PARAMETER);
-                    testContext.removeAttribute(TapestryTestConstants.WEBDRIVER_WAIT_TIMEOUT_PARAMETER);
+                    LOGGER.error("Webdriver shutdown failure.", e);
                 }
             }
-        });
+
+            try
+            {
+                stopWebServer.run();
+            } catch (RuntimeException e)
+            {
+                LOGGER.error("Web server shutdown failure.", e);
+            }
+
+            throw ex;
+        }
     }
     
     private static String createProfileRootInUserHome() {
