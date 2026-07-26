@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2013 The Apache Software Foundation
+// Copyright 2009, 2010, 2011, 2013, 20026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,12 +22,29 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 
 /**
  * Launches an instance of Jetty.
  */
 public class JettyRunner implements ServletContainerRunner
 {
+    /**
+     * Number of attempts made to acquire the server's ports before giving up.
+     *
+     * @since 5.10
+     */
+    private static final int BIND_ATTEMPTS = 5;
+
+    /**
+     * Delay, in milliseconds, between attempts to acquire the server's ports.
+     *
+     * @since 5.10
+     */
+    private static final long BIND_RETRY_DELAY = 500;
+
     private Server jettyServer;
 
     private String description;
@@ -35,6 +52,8 @@ public class JettyRunner implements ServletContainerRunner
     private int port;
 
     private int sslPort;
+
+    private boolean sslEnabled;
 
     public JettyRunner()
     {
@@ -65,7 +84,9 @@ public class JettyRunner implements ServletContainerRunner
         // SSL support
         File keystoreFile = new File(TapestryRunnerConstants.MODULE_BASE_DIR, "src/test/conf/keystore");
 
-        if (keystoreFile.exists())
+        sslEnabled = keystoreFile.exists();
+
+        if (sslEnabled)
         {
             SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
             sslContextFactory.setKeyStorePath(keystoreFile.getAbsolutePath());
@@ -91,6 +112,13 @@ public class JettyRunner implements ServletContainerRunner
 
     public void start() throws Exception
     {
+        awaitPortAvailable(port);
+
+        if (sslEnabled)
+        {
+            awaitPortAvailable(sslPort);
+        }
+
         jettyServer.start();
     }
 
@@ -106,12 +134,62 @@ public class JettyRunner implements ServletContainerRunner
         {
             // Stop immediately and not gracefully.
             jettyServer.stop();
+
+            // Release the connectors and the thread pool, rather than leaving them to be
+            // collected at some later point.
+            jettyServer.destroy();
         } catch (Exception ex)
         {
             throw new RuntimeException("Error stopping Jetty instance: " + ex.toString(), ex);
         }
 
         System.out.println("Jetty instance has stopped.");
+    }
+
+    /**
+     * Waits, for a bounded amount of time, until the given port can be acquired.
+     *
+     * <p>A port might not always be available the instant the server holding it is stopped,
+     * so a suite that runs several test applications in sequence inside a single JVM could
+     * otherwise fail with "Failed to bind" IOException.
+     *
+     * @param portToAcquire
+     *         the port the server is about to bind
+     * @throws IOException
+     *         if the port is still held after {@link #BIND_ATTEMPTS} attempts
+     * @since 5.10
+     */
+    private static void awaitPortAvailable(int portToAcquire) throws IOException, InterruptedException
+    {
+        IOException failure = null;
+
+        for (int attempt = 0; attempt < BIND_ATTEMPTS; attempt++)
+        {
+            if (attempt > 0)
+            {
+                Thread.sleep(BIND_RETRY_DELAY);
+            }
+
+            // Jetty's connectors set SO_REUSEADDR, so this probe has to as well for the result to
+            // mean the same thing.
+            try (ServerSocket probe = new ServerSocket())
+            {
+                probe.setReuseAddress(true);
+                probe.bind(new InetSocketAddress(portToAcquire));
+
+                return;
+            } catch (IOException ex)
+            {
+                failure = ex;
+
+                System.out.printf("Port %d is not available yet (attempt %d of %d).%n",
+                        portToAcquire, attempt + 1, BIND_ATTEMPTS);
+            }
+        }
+
+        throw new IOException(String.format(
+                "Port %d is still in use after %d attempts over %d ms; a previous server instance, or another process, has not released it.",
+                portToAcquire, BIND_ATTEMPTS, (BIND_ATTEMPTS - 1) * BIND_RETRY_DELAY), failure);
     }
 
     public Server getServer()
