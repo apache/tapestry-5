@@ -12,7 +12,6 @@
 
 package org.apache.tapestry5.json;
 
-import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
 
@@ -38,16 +37,13 @@ public abstract class JSONCollection implements Serializable
     @Override
     public String toString()
     {
-        CharArrayWriter caw = new CharArrayWriter();
-        PrintWriter pw = new PrintWriter(caw);
+        StringBuilder out = new StringBuilder(estimateCapacity());
 
-        JSONPrintSession session = new PrettyPrintSession(pw);
+        JSONPrintSession session = new PrettyPrintSession(out);
 
         print(session);
 
-        pw.close();
-
-        return caw.toString();
+        return out.toString();
     }
 
     /**
@@ -68,15 +64,31 @@ public abstract class JSONCollection implements Serializable
      */
     public String toCompactString()
     {
-        CharArrayWriter caw = new CharArrayWriter();
-        PrintWriter pw = new PrintWriter(caw);
+        StringBuilder out = new StringBuilder(estimateCapacity());
 
-        print(pw);
+        JSONPrintSession session = new CompactSession(out);
 
-        pw.close();
+        print(session);
 
-        return caw.toString();
+        return out.toString();
     }
+
+    /**
+     * A cheap starting capacity for the {@link StringBuilder} backing {@link #toString()} /
+     * {@link #toCompactString()}, to avoid repeated grow-and-copy cycles for non-trivial trees.
+     * Scales with the top-level collection's element count only; recursing into nested
+     * collections isn't worth the extra bookkeeping for a rough estimate.
+     */
+    private int estimateCapacity()
+    {
+        return Math.max(256, size() * 32);
+    }
+
+    /**
+     * The number of top-level entries (name/value pairs for {@link JSONObject}, elements for
+     * {@link JSONArray}), used only to estimate a starting buffer capacity.
+     */
+    abstract int size();
 
     /**
      * Prints the JSONObject to the write (compactly or not).

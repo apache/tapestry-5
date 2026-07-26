@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@ import java.io.PrintWriter;
 
 /**
  * Used to pretty-print JSON content, with a customizable indentation.
- * 
+ *
  * @since 5.2.0
  */
 class PrettyPrintSession implements JSONPrintSession
 {
-    private final PrintWriter writer;
+    private final JSONPrintSink out;
 
     private final String indentString;
 
@@ -37,9 +37,15 @@ class PrettyPrintSession implements JSONPrintSession
     private Position position = Position.MARGIN;
 
     /** Defaults the indentation to be two spaces per indentation level. */
+    PrettyPrintSession(StringBuilder out)
+    {
+        this(new StringBuilderPrintSink(out), "  ");
+    }
+
+    /** Defaults the indentation to be two spaces per indentation level. */
     public PrettyPrintSession(PrintWriter writer)
     {
-        this(writer, "  ");
+        this(new WriterPrintSink(writer), "  ");
     }
 
     /**
@@ -50,7 +56,12 @@ class PrettyPrintSession implements JSONPrintSession
      */
     public PrettyPrintSession(PrintWriter writer, String indentString)
     {
-        this.writer = writer;
+        this(new WriterPrintSink(writer), indentString);
+    }
+
+    private PrettyPrintSession(JSONPrintSink out, String indentString)
+    {
+        this.out = out;
         this.indentString = indentString;
     }
 
@@ -67,7 +78,7 @@ class PrettyPrintSession implements JSONPrintSession
     {
         if (position != Position.MARGIN)
         {
-            writer.write('\n');
+            out.append('\n');
             position = Position.MARGIN;
         }
 
@@ -87,7 +98,7 @@ class PrettyPrintSession implements JSONPrintSession
         if (position == Position.MARGIN)
         {
             for (int i = 0; i < indentLevel; i++)
-                writer.print(indentString);
+                out.append(indentString);
 
             position = Position.INDENTED;
         }
@@ -97,7 +108,7 @@ class PrettyPrintSession implements JSONPrintSession
     {
         if (position == Position.CONTENT)
         {
-            writer.print(' ');
+            out.append(' ');
         }
     }
 
@@ -113,7 +124,7 @@ class PrettyPrintSession implements JSONPrintSession
     {
         prepareToPrint();
 
-        writer.print(value);
+        out.append(value);
 
         position = Position.CONTENT;
 
@@ -123,7 +134,15 @@ class PrettyPrintSession implements JSONPrintSession
     @Override
     public JSONPrintSession printQuoted(String value)
     {
-        return print(JSONObject.quote(value));
+        prepareToPrint();
+
+        out.append('"');
+        JSONObject.escapeInto(out, value);
+        out.append('"');
+
+        position = Position.CONTENT;
+
+        return this;
     }
 
     @Override
@@ -134,7 +153,7 @@ class PrettyPrintSession implements JSONPrintSession
         if (symbol != ',')
             addSep();
 
-        writer.print(symbol);
+        out.append(symbol);
 
         return this;
     }
