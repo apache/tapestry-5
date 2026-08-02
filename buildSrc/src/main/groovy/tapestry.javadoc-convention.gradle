@@ -14,6 +14,6 @@ tasks.withType(Javadoc).configureEach {
     options.addStringOption('Xdoclint:all,-reference', '-quiet')
     options.addStringOption('source', '11')
     options.addBooleanOption('html5', true)
-    options.links('https://docs.oracle.com/javase/8/docs/api/')
+    options.links('https://docs.oracle.com/en/java/javase/11/docs/api/')
     options.tags = ['tapestrydoc:a:Component Documentation']
 }
