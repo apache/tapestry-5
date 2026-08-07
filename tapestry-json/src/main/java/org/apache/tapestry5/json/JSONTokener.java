@@ -476,14 +476,14 @@ class JSONTokener {
                 case ',':
                 case ';':
                     /* A separator without a value first means "null". */
-                    result.put(JSONObject.NULL);
+                    result.add(JSONObject.NULL);
                     hasTrailingSeparator = true;
                     continue;
                 default:
                     pos--;
             }
 
-            result.put(nextValue(null));
+            result.add(nextValue(null));
 
             switch (nextCleanInternal()) {
                 case ']':

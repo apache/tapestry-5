@@ -1,4 +1,4 @@
-// Copyright 2025 The Apache Software Foundation
+// Copyright 2025, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -320,8 +320,8 @@ public class JSONObjectTest {
 
         JSONObject object = new JSONObject("{fred: 'flintstone'}");
 
-        assertTrue(object.has("fred"));
-        assertFalse(object.has("barney"));
+        assertTrue(object.containsKey("fred"));
+        assertFalse(object.containsKey("barney"));
     }
 
     @Test
@@ -456,7 +456,12 @@ public class JSONObjectTest {
         return Stream.of(
             Arguments.of(null, "\"\"", "null is empty string"),
             Arguments.of("", "\"\"", "empty string is empty string"),
-            Arguments.of("\"/\b\t\n\f\r\u2001/a</", "\"\\\"/\\b\\t\\n\\f\\r\\u2001/a<\\/\"", "special characters")
+            Arguments.of("\"/\b\t\n\f\r\u2001/a</", "\"\\\"/\\b\\t\\n\\f\\r\\u2001/a<\\/\"", "special characters"),
+            Arguments.of(
+                " \u0080\u009f\u00a0\u1fff\u2000\u20ff\u2100",
+                "\"\\u001f \\u0080\\u009f\u00a0\u1fff\\u2000\\u20ff\u2100\"",
+                "escape range boundaries: 0x1F/0x20, 0x7F/0x80/0x9F/0xA0, 0x1FFF/0x2000/0x20FF/0x2100"
+            )
         );
     }
 
