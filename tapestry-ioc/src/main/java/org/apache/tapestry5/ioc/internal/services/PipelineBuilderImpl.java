@@ -14,9 +14,13 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.tapestry5.commons.services.PlasticProxyFactory;
+import org.apache.tapestry5.commons.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.AssembledPipeline;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.DefaultImplementationBuilder;
 import org.apache.tapestry5.ioc.services.PipelineBuilder;
@@ -28,6 +32,8 @@ public class PipelineBuilderImpl implements PipelineBuilder
     private final PlasticProxyFactory proxyFactory;
 
     private final DefaultImplementationBuilder defaultImplementationBuilder;
+
+    private final List<AssembledPipeline> assembledPipelines = CollectionFactory.newThreadSafeList();
 
     public PipelineBuilderImpl(@Builtin
     PlasticProxyFactory proxyFactory,
@@ -50,6 +56,8 @@ public class PipelineBuilderImpl implements PipelineBuilder
     public <S, F> S build(Logger logger, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters,
             S terminator)
     {
+        track(serviceInterface, filterInterface, filters, terminator);
+
         if (filters.isEmpty())
             return terminator;
 
@@ -69,7 +77,35 @@ public class PipelineBuilderImpl implements PipelineBuilder
             next = bb.instantiateBridge(next, filter);
         }
 
+        if (logger.isDebugEnabled())
+        {
+            logger.debug("Assembled pipeline: {}", next);
+        }
+
         return next;
+    }
+
+    @Override
+    public List<AssembledPipeline> getAssembledPipelines()
+    {
+        return Collections.unmodifiableList(assembledPipelines);
+    }
+
+    /**
+     * Records the pipeline for later introspection, describing the filters and the terminator as they are now rather
+     * than holding on to them.
+     */
+    private <S, F> void track(Class<S> serviceInterface, Class<F> filterInterface, List<F> filters, S terminator)
+    {
+        List<String> descriptions = new ArrayList<>(filters.size());
+
+        for (F filter : filters)
+        {
+            descriptions.add(String.valueOf(filter));
+        }
+
+        assembledPipelines.add(new AssembledPipeline(serviceInterface, filterInterface, descriptions,
+                String.valueOf(terminator)));
     }
 
 }
