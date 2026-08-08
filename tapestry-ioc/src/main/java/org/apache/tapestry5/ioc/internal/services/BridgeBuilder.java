@@ -27,11 +27,19 @@ import java.util.List;
  */
 public class BridgeBuilder<S, F>
 {
+    private static final MethodDescription GET_PIPELINE_FILTER = new MethodDescription("java.lang.Object",
+            "getPipelineFilter");
+
+    private static final MethodDescription GET_PIPELINE_NEXT = new MethodDescription("java.lang.Object",
+            "getPipelineNext");
+
     private final Logger logger;
 
     private final Class<S> serviceInterface;
 
     private final Class<F> filterInterface;
+
+    private final String header;
 
     private final FilterMethodAnalyzer filterMethodAnalyzer;
 
@@ -46,6 +54,8 @@ public class BridgeBuilder<S, F>
         this.filterInterface = filterInterface;
 
         this.proxyFactory = proxyFactory;
+
+        header = PipelineDescriber.header(serviceInterface, filterInterface);
 
         filterMethodAnalyzer = new FilterMethodAnalyzer(serviceInterface);
     }
@@ -80,8 +90,75 @@ public class BridgeBuilder<S, F>
 
                 processMethods(plasticClass, filterField, nextField);
 
-                plasticClass.addToString(String.format("<PipelineBridge from %s to %s>", serviceInterface.getName(),
-                        filterInterface.getName()));
+                introducePipelineStep(plasticClass, filterField, nextField);
+            }
+        });
+    }
+
+    /**
+     * Makes the bridge a {@link PipelineStep}, exposing the filter it wraps and what it delegates to, and adds a
+     * {@code toString()} that describes the pipeline from this step onwards.
+     */
+    private void introducePipelineStep(PlasticClass plasticClass, final PlasticField filterField,
+                                       final PlasticField nextField)
+    {
+        // Rule out that a service interface declares one of the methods we want to introduce.
+        // Fall back to a plain description.
+
+        if (plasticClass.isMethodImplemented(GET_PIPELINE_FILTER) || plasticClass.isMethodImplemented(GET_PIPELINE_NEXT))
+        {
+            plasticClass.addToString(header);
+
+            return;
+        }
+
+        plasticClass.introduceInterface(PipelineStep.class);
+
+        plasticClass.introduceMethod(GET_PIPELINE_FILTER, new InstructionBuilderCallback()
+        {
+            @Override
+            public void doBuild(InstructionBuilder builder)
+            {
+                builder.loadThis().getField(filterField).returnResult();
+            }
+        });
+
+        plasticClass.introduceMethod(GET_PIPELINE_NEXT, new InstructionBuilderCallback()
+        {
+            @Override
+            public void doBuild(InstructionBuilder builder)
+            {
+                builder.loadThis().getField(nextField).returnResult();
+            }
+        });
+
+        addToString(plasticClass);
+    }
+
+    /**
+     * Adds a {@code toString()} that delegates to
+     * {@link PipelineDescriber#describe(String, PipelineStep)}, describing the whole chain from this bridge onwards.
+     *
+     * Nothing is added when {@code toString()} is part of the service interface itself; in that case the method is
+     * already bridged to the filter, and that takes precedence. The pipeline can still be walked as a
+     * {@link PipelineStep}.
+     */
+    private void addToString(PlasticClass plasticClass)
+    {
+        if (plasticClass.isMethodImplemented(PlasticUtils.TO_STRING_DESCRIPTION))
+            return;
+
+        plasticClass.introduceMethod(PlasticUtils.TO_STRING_DESCRIPTION, new InstructionBuilderCallback()
+        {
+            @Override
+            public void doBuild(InstructionBuilder builder)
+            {
+                builder.loadConstant(header).loadThis();
+
+                builder.invokeStatic(PipelineDescriber.class, String.class, "describe", String.class,
+                        PipelineStep.class);
+
+                builder.returnResult();
             }
         });
     }
