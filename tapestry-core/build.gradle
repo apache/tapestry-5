@@ -3,6 +3,7 @@ import t5build.NpmTask
 plugins {
     id 'tapestry.junit5-convention'
     id 'tapestry.testng-convention'
+    id 'tapestry.jmh-convention'
 }
 
 description = 'Central module for Tapestry, containing all core services and components'

@@ -1,5 +1,6 @@
 plugins {
     id 'tapestry.junit5-spock-convention'
+    id 'tapestry.jmh-convention'
 }
 
 description = 'High-level runtime transformations of Java classes'

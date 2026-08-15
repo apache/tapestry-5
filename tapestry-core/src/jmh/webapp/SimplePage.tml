@@ -1,0 +1,11 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>${title}</title>
+    </head>
+    <body>
+        <h1>${title}</h1>
+        <p>
+            A page with no embedded components, used as the baseline of the page-load benchmarks.
+        </p>
+    </body>
+</html>

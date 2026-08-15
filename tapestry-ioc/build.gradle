@@ -1,5 +1,6 @@
 plugins {
     id 'tapestry.junit5-spock-convention'
+    id 'tapestry.jmh-convention'
 }
 description = 'A code-centric, high-performance, simple Inversion of Control container'
 
