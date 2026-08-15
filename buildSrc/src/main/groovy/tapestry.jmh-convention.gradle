@@ -1,0 +1,222 @@
+// Use for modules that carry JMH microbenchmarks under src/jmh/java.
+//
+// Adds a 'jmh' source set that sees the module's own classes and its compile
+// dependencies (including the 'provided' configuration), wires the JMH annotation
+// processor that generates the benchmark harness, and registers two tasks:
+//
+//   ./gradlew :tapestry-core:jmhList     lists the benchmarks of the module
+//   ./gradlew :tapestry-core:jmh         runs them
+//
+// Benchmarks are deliberately NOT part of 'check' or 'build': a JMH run takes
+// minutes or longer and has no place in CI.
+//
+// `./gradlew jmhCompileAll` (root project) compiles every benchmark source set
+// so they cannot silently rot.
+//
+// Run options, all passed as -P properties:
+//
+//   -Pjmh.include=Regex     benchmarks to run, matched against the fully qualified
+//                           method name (default: all of them)
+//   -Pjmh.exclude=Regex     benchmarks to skip
+//   -Pjmh.quick             one fork, 3x1s warmup, 3x1s measurement. Good enough to
+//                           see a 2x difference, NOT good enough to publish. Do not use it
+//                           on the cold/startup benchmarks: those measure a single shot in a
+//                           fresh JVM, and forcing three measurement iterations means two of
+//                           the three run against an already-warmed JVM. Override -Pjmh.forks
+//                           on its own instead. Any of the properties below overrides the
+//                           matching -Pjmh.quick value, the rest of it stays in effect.
+//   -Pjmh.forks=N           JVM forks per benchmark (JMH default: 5)
+//   -Pjmh.warmups=N         warmup iterations per fork
+//   -Pjmh.iterations=N      measurement iterations per fork
+//   -Pjmh.warmupTime=1s     duration of a warmup iteration
+//   -Pjmh.time=1s           duration of a measurement iteration
+//   -Pjmh.threads=N         threads per benchmark ('max' for one per core)
+//   -Pjmh.mode=avgt         benchmark mode override (thrpt|avgt|sample|ss|all)
+//   -Pjmh.profilers=gc,stack   comma-separated JMH profilers; 'gc' reports the
+//                           allocation rate, which is what most Tapestry
+//                           benchmarks are actually about
+//   -Pjmh.jvmArgs=-Xmx2g    extra JVM arguments for the forked JVMs
+//   -Pjmh.args=...          raw arguments appended verbatim, for anything above
+//                           that this convention does not expose
+//   -Pjmh.resultFile=path   where to write the JSON results, relative to the root project
+//                           instead of the module's build directory. Use it to keep a
+//                           before/after pair side by side, see benchmark-results/README.md
+//
+// Results are always written as JSON to build/reports/jmh/results.json, so two
+// runs can be diffed (for instance with https://jmh.morethan.io/).
+//
+// Example, comparing anonymous classes against lambdas with allocation numbers:
+//
+//   ./gradlew :tapestry-ioc:jmh -Pjmh.include=Lambda -Pjmh.profilers=gc
+
+plugins {
+    id 'tapestry.java-convention'
+}
+
+sourceSets {
+    jmh {
+        compileClasspath += sourceSets.main.output + configurations.provided
+        runtimeClasspath += sourceSets.main.output + configurations.provided
+    }
+}
+
+configurations {
+    // Benchmarks need everything the module itself needs
+    jmhImplementation.extendsFrom api, implementation
+    jmhRuntimeOnly.extendsFrom runtimeOnly
+}
+
+dependencies {
+    jmhImplementation libs.jmh.core
+    jmhAnnotationProcessor libs.jmh.core
+    jmhAnnotationProcessor libs.jmh.generator.annprocess
+
+    // Benchmarks that boot an IoC registry log during setup.
+    // Without a binding SLF4J prints its warning into the middle of the measurement output.
+    jmhRuntimeOnly libs.slf4j.simple
+}
+
+idea.module.testSources.from(sourceSets.jmh.java.srcDirs)
+eclipse.classpath.plusConfigurations += [configurations.jmhRuntimeClasspath]
+
+def jmhResults = layout.buildDirectory.file('reports/jmh/results.json')
+
+// Everything below translates the -P properties documented above into JMH command line
+// arguments, one closure per group of arguments.
+
+// The value of -Pjmh.<name>, trimmed, or null when the property is unset or blank.
+def jmhProperty = { String name ->
+    project.findProperty("jmh.${name}")?.toString()?.trim() ?: null
+}
+
+// The JMH flag of every property that carries a single value, in the order they are passed.
+def valueFlags = [
+        forks     : '-f',
+        warmups   : '-wi',
+        iterations: '-i',
+        warmupTime: '-w',
+        time      : '-r',
+        threads   : '-t',
+        mode      : '-bm']
+
+// What -Pjmh.quick stands for: "I am iterating on an optimization and want a number now".
+def quickValues = [
+        forks     : '1',
+        warmups   : '3',
+        iterations: '3',
+        warmupTime: '1s',
+        time      : '1s']
+
+// Which benchmarks to touch.
+// JMH takes the include pattern as its positional argument.
+def selectionArguments = {
+
+    def args = [jmhProperty('include') ?: '.*']
+
+    def exclude = jmhProperty('exclude')
+    if (exclude)
+    {
+        args += ['-e', exclude]
+    }
+
+    return args
+}
+
+// How to run them.
+// JMH refuses a flag it sees twice ("Found multiple arguments for option f"),
+// so an explicit property has to replace its -Pjmh.quick counterpart rather than follow it.
+def measurementArguments = {
+
+    def quick = project.hasProperty('jmh.quick')
+    def args = []
+
+    valueFlags.each { property, flag ->
+        def value = jmhProperty(property) ?: (quick ? quickValues[property] : null)
+        if (value)
+        {
+            args += [flag, value]
+        }
+    }
+
+    jmhProperty('profilers')?.split(',')?.each { profiler ->
+        args += ['-prof', profiler.trim()]
+    }
+
+    return args
+}
+
+// Benchmarks that boot a registry or load a page log a line per operation at INFO, which
+// would be measured along with the work and would drown the results.
+// JMH splits a single -jvmArgsAppend on spaces, so everything has to go into one value.
+def jvmArguments = {
+
+    def jvmArgs = ['-Dorg.slf4j.simpleLogger.defaultLogLevel=warn']
+
+    def extraJvmArgs = jmhProperty('jvmArgs')
+    if (extraJvmArgs)
+    {
+        jvmArgs << extraJvmArgs
+    }
+
+    return ['-jvmArgsAppend', jvmArgs.join(' ')]
+}
+
+// Where the JSON results go: the module's own build directory unless -Pjmh.resultFile
+// points somewhere else, relative to the root project.
+def jmhResultFile = {
+
+    def override = jmhProperty('resultFile')
+
+    return override ? project.rootProject.file(override) : jmhResults.get().asFile
+}
+
+// -Pjmh.args, appended verbatim for anything this convention does not expose.
+def rawArguments = {
+    jmhProperty('args')?.split('\\s+')?.toList() ?: []
+}
+
+def jmhListArguments = {
+    selectionArguments() + ['-l']
+}
+
+def jmhRunArguments = { File resultFile ->
+    selectionArguments() +
+            measurementArguments() +
+            jvmArguments() +
+            ['-rf', 'json', '-rff', resultFile.absolutePath] +
+            rawArguments()
+}
+
+tasks.register('jmh', JavaExec) {
+    group = 'benchmark'
+    description = 'Runs this module\'s JMH benchmarks. Use -Pjmh.include=Regex to pick some, -Pjmh.quick for a rough number.'
+
+    mainClass = 'org.openjdk.jmh.Main'
+    classpath = sourceSets.jmh.runtimeClasspath
+
+    // A benchmark result is never up to date: the point of re-running it is that
+    // the machine, the JDK or the code under measurement may have changed.
+    outputs.upToDateWhen { false }
+
+    doFirst {
+        def resultFile = jmhResultFile()
+        resultFile.parentFile.mkdirs()
+
+        args = jmhRunArguments(resultFile)
+        logger.lifecycle "JMH: ${args.join(' ')}"
+    }
+}
+
+tasks.register('jmhList', JavaExec) {
+    group = 'benchmark'
+    description = 'Lists the JMH benchmarks of this module without running them.'
+
+    mainClass = 'org.openjdk.jmh.Main'
+    classpath = sourceSets.jmh.runtimeClasspath
+
+    outputs.upToDateWhen { false }
+
+    doFirst {
+        args = jmhListArguments()
+    }
+}
