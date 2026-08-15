@@ -142,15 +142,22 @@ The `testng.xml` suite file for these modules should contain **only** integratio
 Unit tests are handled by the `test` task via testng-engine by Jupiter and must not appear in `testng.xml`.
 
 The task **must** be named `testNG`: the convention gives every task with that name a permit on the
-`integrationTestMutex` build service, described below.
+`mutex` build service, described below.
 A differently named task gets no permit and will race the others for the ports.
 
-#### Serializing integration tests
+#### Serializing tasks that need the machine to themselves
 
 Every Selenium suite binds the same ports, so no two may run at once.
 Rather than disabling parallel builds (not a simple flag on project-level), the convention registers
-an `IntegrationTestMutex` build service with `maxParallelUsages = 1` and declares it on each `testNG` task.
-Gradle then admits one integration test task at a time while compilation, asset generation and the unit test suites still run in parallel.
+a `Mutex` build service with `maxParallelUsages = 1` and declares it on each `testNG` task.
+Gradle then admits one such task at a time while compilation, asset generation and the unit test suites still run in parallel.
+
+`tapestry.jmh-convention` registers the same service, under the same name, for its `jmh` task.
+A benchmark measures the machine it runs on, so a second benchmark or a Selenium suite running beside it does not merely slow the run down, it makes the numbers meaningless.
+Sharing one permit across both conventions keeps benchmarks apart from each other **and** from the integration tests.
+
+The permit only holds back tasks that ask for it, so a compilation or a unit test suite can still land next to a benchmark.
+Use `--max-workers=1` when a run has to be quiet.
 
 ---
 
@@ -158,3 +165,7 @@ Gradle then admits one integration test task at a time while compilation, asset 
 
 **`GenerateChecksums`**: custom Gradle task type that generates MD5/SHA-256 checksum
 files for release archives.
+
+**`Mutex`**: build service without behaviour, registered with one permit so that the tasks
+declaring it run one at a time — the Selenium integration tests, which share fixed ports, and
+the JMH benchmarks, which share the machine.

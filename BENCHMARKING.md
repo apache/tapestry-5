@@ -34,6 +34,9 @@ Benchmarks are **not** part of `check` or `build`, as JMH might take minutes or 
 
 Every option is documented at the top of [`buildSrc/src/main/groovy/tapestry.jmh-convention.gradle`](buildSrc/src/main/groovy/tapestry.jmh-convention.gradle).
 
+A benchmark measures the machine it runs on, so the `jmh` tasks hold a single build-service permit and run one at a time, even under a parallel build.
+`./gradlew jmh` across several modules therefore takes as long as all of them added up, instead of producing numbers measured while the other modules fought for the same cores.
+
 The two that matter most:
 
 - **`-Pjmh.quick`**\

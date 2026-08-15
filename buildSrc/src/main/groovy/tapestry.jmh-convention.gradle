@@ -10,6 +10,11 @@
 // Benchmarks are deliberately NOT part of 'check' or 'build': a JMH run takes
 // minutes or longer and has no place in CI.
 //
+// A benchmark measures the machine it runs on, so the 'jmh' tasks hold a one-permit
+// build service (t5build.Mutex) and run one at a time. './gradlew jmh' over several
+// modules therefore takes as long as the sum of them, rather than producing numbers
+// taken while the other modules fought for the cores.
+//
 // `./gradlew jmhCompileAll` (root project) compiles every benchmark source set
 // so they cannot silently rot.
 //
@@ -48,6 +53,8 @@
 // Example, comparing anonymous classes against lambdas with allocation numbers:
 //
 //   ./gradlew :tapestry-ioc:jmh -Pjmh.include=Lambda -Pjmh.profilers=gc
+
+import t5build.Mutex
 
 plugins {
     id 'tapestry.java-convention'
@@ -187,12 +194,19 @@ def jmhRunArguments = { File resultFile ->
             rawArguments()
 }
 
+// A benchmark has the machine to itself, or it measures the rest of the build instead.
+def mutex = gradle.sharedServices.registerIfAbsent('mutex', Mutex) {
+    maxParallelUsages = 1
+}
+
 tasks.register('jmh', JavaExec) {
     group = 'benchmark'
     description = 'Runs this module\'s JMH benchmarks. Use -Pjmh.include=Regex to pick some, -Pjmh.quick for a rough number.'
 
     mainClass = 'org.openjdk.jmh.Main'
     classpath = sourceSets.jmh.runtimeClasspath
+
+    usesService(mutex)
 
     // A benchmark result is never up to date: the point of re-running it is that
     // the machine, the JDK or the code under measurement may have changed.
