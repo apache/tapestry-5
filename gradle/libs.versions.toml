@@ -79,6 +79,10 @@ easymock = "5.6.0"
 
 spock = "2.4-groovy-4.0"
 
+# BENCHMARKING
+
+jmh = "1.37"
+
 selenium-java    = "4.12.1"
 selenium-legrc   = "4.5.0"
 webdrivermanager = "5.5.2"
@@ -205,6 +209,11 @@ easymock = { module = "org.easymock:easymock", version.ref = "easymock" }
 
 spock-bom  = { module = "org.spockframework:spock-bom", version.ref = "spock" }
 spock-core = { module = "org.spockframework:spock-core" }
+
+# BENCHMARKING
+
+jmh-core                 = { module = "org.openjdk.jmh:jmh-core", version.ref = "jmh" }
+jmh-generator-annprocess = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.ref = "jmh" }
 
 selenium-java    = { module = "org.seleniumhq.selenium:selenium-java", version.ref = "selenium-java" }
 selenium-legrc   = { module = "org.seleniumhq.selenium:selenium-leg-rc", version.ref = "selenium-legrc" }
