@@ -413,7 +413,7 @@ public class JavaScriptModule
                                         @Path("${tapestry.asset.root}/typeahead.js")
                                         Resource typeahead,
 
-                                        @Path("${tapestry.asset.root}/moment-2.15.1.js")
+                                        @Path("${tapestry.asset.root}/moment.js")
                                         Resource moment,
                                         
                                         @Path("${tapestry.asset.root}/bootstrap/js/transition.js")
