@@ -33,7 +33,7 @@
                 <div class="panel-heading">
                     <h2 class="panel-title">An exception has occurred processing this request.</h2>
                 </div>
-                <div class="panel-body">
+                <div class="panel-body" t:type="If" t:test="!productionMode">
                     ${rootException.message}
                 </div>
                 <t:if test="showActions">
