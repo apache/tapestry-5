@@ -461,7 +461,7 @@ public class JavaScriptModule
                                         @Path("${tapestry.asset.root}/typeahead.js")
                                         Resource typeahead,
 
-                                        @Path("${tapestry.asset.root}/moment-2.15.1.js")
+                                        @Path("${tapestry.asset.root}/moment.js")
                                         Resource moment,
                                         
                                         @Path("${tapestry.asset.root}/bootstrap/js/transition.js")
@@ -577,7 +577,7 @@ public class JavaScriptModule
                 .defaultExport("jQuery.noConflict()")
                 .getResource());
         
-        final Resource moment = assetSource.getClasspathAsset("/META-INF/assets/tapestry5//moment-2.15.1.js")
+        final Resource moment = assetSource.getClasspathAsset("/META-INF/assets/tapestry5/moment.js")
                 .getResource();
         configuration.add("t5/core/moment", new EsShim(moment)
                 .defaultExport("moment")
