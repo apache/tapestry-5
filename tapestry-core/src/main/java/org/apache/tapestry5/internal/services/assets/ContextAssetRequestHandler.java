@@ -20,6 +20,8 @@ import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.services.ContextAssetProtectionRule;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -32,6 +34,8 @@ import java.util.regex.Pattern;
  */
 public class ContextAssetRequestHandler implements AssetRequestHandler
 {
+    private final static Logger LOGGER = LoggerFactory.getLogger(ContextAssetRequestHandler.class);
+
     private final ResourceStreamer resourceStreamer;
 
     private final Resource rootContextResource;
@@ -52,18 +56,47 @@ public class ContextAssetRequestHandler implements AssetRequestHandler
     {
         ChecksumPath path = new ChecksumPath(resourceStreamer, null, extraPath);
 
-        if (illegal.matcher(path.resourcePath).matches())
+        final Resource resource;
+
+        try
         {
+            resource = rootContextResource.forFile(path.resourcePath);
+        }
+        catch (IllegalStateException ex)
+        {
+            // Fail closed: treat it as blocked rather than surfacing it as a server error.
+            if (LOGGER.isWarnEnabled())
+            {
+                LOGGER.warn("Blocked request for context asset '" + path.resourcePath +
+                        "': " + ex.getMessage());
+            }
+            return false;
+        }
+
+        final String resourcePath = resource.getPath();
+
+        if (illegal.matcher(resourcePath).matches())
+        {
+            if (LOGGER.isWarnEnabled())
+            {
+                LOGGER.warn("Blocked request for context asset '" + resourcePath +
+                        "': the path resolves to a protected location (WEB-INF, META-INF or a template).");
+            }
             return false;
         }
 
         // TAP5-2835: Allow custom protection rules mirroring ClasspathAssetProtectionRule
-        if (contextAssetProtectionRule.block(path.resourcePath))
+        if (contextAssetProtectionRule.block(resourcePath))
         {
+            if (LOGGER.isWarnEnabled())
+            {
+                LOGGER.warn("Blocked request for context asset '" + resourcePath +
+                        "'. Contribute a new ContextAssetProtectionRule if you need this asset to be publicly accessible.");
+            }
             return false;
         }
 
-        return path.stream(rootContextResource.forFile(path.resourcePath));
+        return path.stream(resource);
     }
 
 }
