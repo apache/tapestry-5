@@ -501,7 +501,7 @@ public class AssetsModule
         final int lastIndex = path.lastIndexOf('/');
         if (lastIndex >= 0)
         {
-            path = path.substring(lastIndex);
+            path = path.substring(lastIndex + 1);
         }
         return path.toLowerCase();
     }
