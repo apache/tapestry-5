@@ -25,7 +25,10 @@ import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
  * A handler for asset requests for classpath assets (within a specific folder).
@@ -93,10 +96,49 @@ public class ClasspathAssetRequestHandler implements AssetRequestHandler
             }
             handled = false;
         }
+        else if (isDirectory(resource))
+        {
+            if (LOGGER.isWarnEnabled())
+            {
+                LOGGER.warn("Blocked request for classpath asset '" + resourcePath +
+                        "': the path resolves to a directory, not a file.");
+            }
+            handled = false;
+        }
         else
         {
             handled = path.stream(resource);
         }
         return handled;
+    }
+
+    /**
+     * Tells whether the resolved resource is a directory rather than a streamable file. A
+     * non-existent resource is not a directory (it is handled as a normal "not found" downstream).
+     */
+    private static boolean isDirectory(Resource resource)
+    {
+        final URL url = resource.toURL();
+
+        if (url == null)
+        {
+            return false;
+        }
+
+        if ("file".equalsIgnoreCase(url.getProtocol()))
+        {
+            try
+            {
+                return new File(url.toURI()).isDirectory();
+            }
+            catch (URISyntaxException ex)
+            {
+                return new File(url.getPath()).isDirectory();
+            }
+        }
+
+        // Inside archives (jar:, etc.) a directory entry, when the classloader exposes one at all,
+        // is conventionally represented with a trailing slash.
+        return url.getPath().endsWith("/");
     }
 }
