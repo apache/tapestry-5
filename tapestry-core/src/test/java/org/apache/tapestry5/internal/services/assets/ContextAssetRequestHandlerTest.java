@@ -66,7 +66,7 @@ class ContextAssetRequestHandlerTest
     void ensureAssetsAreRejected(String path) throws IOException
     {
         // ARRANGE
-        ContextAssetRequestHandler handler = new ContextAssetRequestHandler(null, null, NEVER_BLOCK);
+        ContextAssetRequestHandler handler = new ContextAssetRequestHandler(null, CONTEXT_ROOT, NEVER_BLOCK);
 
         // ACT
         boolean providedResponse = handler.handleAssetRequest(null, null, "fake-checksum/" + path);
@@ -79,7 +79,7 @@ class ContextAssetRequestHandlerTest
     void contextAssetProtectionRuleIsConsulted() throws IOException
     {
         // ARRANGE
-        ContextAssetRequestHandler handler = new ContextAssetRequestHandler(null, null, BLOCK_MAP_FILES);
+        ContextAssetRequestHandler handler = new ContextAssetRequestHandler(null, CONTEXT_ROOT, BLOCK_MAP_FILES);
 
         // ACT
         boolean providedResponse = handler.handleAssetRequest(null, null, "fake-checksum/app.js.map");
