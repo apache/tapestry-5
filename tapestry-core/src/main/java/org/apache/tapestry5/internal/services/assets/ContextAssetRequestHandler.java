@@ -1,4 +1,4 @@
-// Copyright 2010, 2013 The Apache Software Foundation
+// Copyright 2010, 2013, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,10 @@ import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.http.services.Request;
 import org.apache.tapestry5.http.services.Response;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
+import org.apache.tapestry5.services.ContextAssetProtectionRule;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -31,28 +34,69 @@ import java.util.regex.Pattern;
  */
 public class ContextAssetRequestHandler implements AssetRequestHandler
 {
+    private final static Logger LOGGER = LoggerFactory.getLogger(ContextAssetRequestHandler.class);
+
     private final ResourceStreamer resourceStreamer;
 
     private final Resource rootContextResource;
 
+    private final ContextAssetProtectionRule contextAssetProtectionRule;
+
     private final Pattern illegal = Pattern.compile("^([\\\\/]*((web|meta)-inf.*)|(.*\\.tml$))", Pattern.CASE_INSENSITIVE);
 
-    public ContextAssetRequestHandler(ResourceStreamer resourceStreamer, Resource rootContextResource)
+    public ContextAssetRequestHandler(ResourceStreamer resourceStreamer, Resource rootContextResource,
+                                       ContextAssetProtectionRule contextAssetProtectionRule)
     {
         this.resourceStreamer = resourceStreamer;
         this.rootContextResource = rootContextResource;
+        this.contextAssetProtectionRule = contextAssetProtectionRule;
     }
 
     public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
     {
         ChecksumPath path = new ChecksumPath(resourceStreamer, null, extraPath);
 
-        if (illegal.matcher(path.resourcePath).matches())
+        final Resource resource;
+
+        try
         {
+            resource = rootContextResource.forFile(path.resourcePath);
+        }
+        catch (IllegalStateException ex)
+        {
+            // Fail closed: treat it as blocked rather than surfacing it as a server error.
+            if (LOGGER.isWarnEnabled())
+            {
+                LOGGER.warn("Blocked request for context asset '" + path.resourcePath +
+                        "': " + ex.getMessage());
+            }
             return false;
         }
 
-        return path.stream(rootContextResource.forFile(path.resourcePath));
+        final String resourcePath = resource.getPath();
+
+        if (illegal.matcher(resourcePath).matches())
+        {
+            if (LOGGER.isWarnEnabled())
+            {
+                LOGGER.warn("Blocked request for context asset '" + resourcePath +
+                        "': the path resolves to a protected location (WEB-INF, META-INF or a template).");
+            }
+            return false;
+        }
+
+        // TAP5-2835: Allow custom protection rules mirroring ClasspathAssetProtectionRule
+        if (contextAssetProtectionRule.block(resourcePath))
+        {
+            if (LOGGER.isWarnEnabled())
+            {
+                LOGGER.warn("Blocked request for context asset '" + resourcePath +
+                        "'. Contribute a new ContextAssetProtectionRule if you need this asset to be publicly accessible.");
+            }
+            return false;
+        }
+
+        return path.stream(resource);
     }
 
 }
