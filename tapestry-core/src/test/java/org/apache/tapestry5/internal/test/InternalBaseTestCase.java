@@ -429,7 +429,9 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     {
         MetaDataLocator l = mockMetaDataLocator();
 
-        expect(l.findMeta(EasyMock.anyObject(String.class), EasyMock.anyObject(String.class), EasyMock.eq(boolean.class))).andReturn(false);
+        // A stub, not an expectation: a single request may consult the whitelist more than once
+        // (the active page, and the containing page when 't:cp' is present).
+        expect(l.findMeta(EasyMock.anyObject(String.class), EasyMock.anyObject(String.class), EasyMock.eq(boolean.class))).andStubReturn(false);
 
         return l;
     }

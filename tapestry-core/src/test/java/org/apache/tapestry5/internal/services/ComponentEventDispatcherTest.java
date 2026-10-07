@@ -213,6 +213,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         expect(request.getAttribute(InternalConstants.REFERENCED_COMPONENT_NOT_FOUND)).andStubReturn(null);
 
+        train_isPageName(resolver, "mypage", true);
+
         train_canonicalizePageName(resolver, "mypage", "mypage");
 
         train_for_request_locale(request, ls);
