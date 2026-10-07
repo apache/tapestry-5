@@ -59,24 +59,42 @@ public class ClasspathAssetRequestHandler implements AssetRequestHandler
     public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
     {
         ChecksumPath path = new ChecksumPath(streamer, baseFolder, extraPath);
-        
-        final boolean handled;
-        
-        final String resourcePath = path.resourcePath.replace("\\.", "");
-        
-        if (classpathAssetProtectionRule.block(resourcePath) && !path.resourcePath.equals(ChecksumPath.NON_EXISTING_RESOURCE)) 
+
+        // Resolve the resource first, then check the protection rule against the
+        // fully-normalized path that will actually be loaded and streamed (Resource#getPath()).
+        final Resource resource;
+
+        try
         {
-            if (LOGGER.isWarnEnabled()) 
+            resource = assetSource.resourceForPath(path.resourcePath);
+        }
+        catch (IllegalStateException ex)
+        {
+            // The path normalized to a location above the classpath root (e.g. a "../" escape).
+            // Fail closed: treat it as blocked rather than surfacing it as a server error.
+            if (LOGGER.isWarnEnabled())
             {
-                LOGGER.warn("Blocked request for classpath asset '" + path.resourcePath + 
+                LOGGER.warn("Blocked request for classpath asset '" + path.resourcePath +
+                        "': " + ex.getMessage());
+            }
+            return false;
+        }
+
+        final String resourcePath = resource.getPath();
+
+        final boolean handled;
+
+        if (classpathAssetProtectionRule.block(resourcePath) && !path.resourcePath.equals(ChecksumPath.NON_EXISTING_RESOURCE))
+        {
+            if (LOGGER.isWarnEnabled())
+            {
+                LOGGER.warn("Blocked request for classpath asset '" + resourcePath +
                         "'. Contribute a new ClasspathAssetProtectionRule if you need this asset to be publicly accessible.");
             }
             handled = false;
         }
         else
         {
-            Resource resource = assetSource.resourceForPath(path.resourcePath);
-    
             handled = path.stream(resource);
         }
         return handled;
