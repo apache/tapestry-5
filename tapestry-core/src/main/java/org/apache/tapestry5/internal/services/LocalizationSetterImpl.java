@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010, 2012 The Apache Software Foundation
+// Copyright 2006, 2007, 2009, 2010, 2012, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,6 +39,23 @@ import org.apache.tapestry5.services.PersistentLocale;
  */
 public class LocalizationSetterImpl implements LocalizationSetter
 {
+    /**
+     * Upper bound on the number of entries retained in {@link #localeCache}.
+     *
+     * <p>
+     * The cache lives for the lifetime of this (singleton) service.
+     * The configured supported locales are pre-seeded and never evicted, so this budget only applies
+     * to request-derived names.
+     * </p>
+     */
+    static final int MAX_LOCALE_CACHE_SIZE = 1000;
+
+    /**
+     * Maximum length of a single underscore-separated term (language, country or variant) of a
+     * cacheable locale name.
+     */
+    static final int MAX_TERM_LENGTH = 16;
+
     private final Request request;
 
     private final ThreadLocale threadLocale;
@@ -87,7 +104,13 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
         for (String name : localeNames)
         {
-            list.add(toLocale(name));
+            Locale locale = constructLocale(name);
+
+            // Pre-seed the cache with the supported locales.
+            // They are trusted configuration and the hot resolution target.
+            localeCache.put(name, locale);
+
+            list.add(locale);
         }
 
         return Collections.unmodifiableList(list);
@@ -100,10 +123,61 @@ public class LocalizationSetterImpl implements LocalizationSetter
         if (result == null)
         {
             result = constructLocale(localeName);
-            localeCache.put(localeName, result);
+
+            if (isCacheableLocaleName(localeName) && localeCache.size() < MAX_LOCALE_CACHE_SIZE)
+            {
+                localeCache.put(localeName, result);
+            }
         }
 
         return result;
+    }
+
+    /**
+     * Whether a locale name is structurally plausible enough to be worth storing in the long-lived
+     * {@link #localeCache}.
+     *
+     * <p>This is a deliberately strict, cheap guard, instead of a full full locale validation:
+     * at most three underscore-separated terms, each ASCII-alphanumeric and bounded by
+     * {@link #MAX_TERM_LENGTH}.
+     */
+    static boolean isCacheableLocaleName(String localeName)
+    {
+        final int length = localeName.length();
+
+        if (length == 0)
+        {
+            return false;
+        }
+
+        int terms = 1;
+        int termLength = 0;
+
+        for (int i = 0; i < length; i++)
+        {
+            final char c = localeName.charAt(i);
+
+            if (c == '_')
+            {
+                // matches constructLocale()'s own limit of three terms
+                if (++terms > 3)
+                {
+                    return false;
+                }
+                termLength = 0;
+            }
+            else if (!isAsciiLetterOrDigit(c) || ++termLength > MAX_TERM_LENGTH)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean isAsciiLetterOrDigit(char c)
+    {
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9');
     }
 
     private Locale constructLocale(String name)
@@ -119,11 +193,9 @@ public class LocalizationSetterImpl implements LocalizationSetter
                 return new Locale(terms[0], terms[1]);
 
             case 3:
-
                 return new Locale(terms[0], terms[1], terms[2]);
 
             default:
-
                 throw new IllegalArgumentException();
         }
     }
