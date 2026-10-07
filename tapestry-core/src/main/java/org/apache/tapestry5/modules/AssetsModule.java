@@ -12,6 +12,8 @@
 
 package org.apache.tapestry5.modules;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +78,7 @@ import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.ClasspathAssetProtectionRule;
 import org.apache.tapestry5.services.ClasspathProvider;
 import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.ContextAssetProtectionRule;
 import org.apache.tapestry5.services.ContextProvider;
 import org.apache.tapestry5.services.Core;
 import org.apache.tapestry5.services.assets.AssetChecksumGenerator;
@@ -419,23 +422,79 @@ public class AssetsModule
     {
         return chainBuilder.build(ClasspathAssetProtectionRule.class, rules);
     }
-    
-    public static void contributeClasspathAssetProtectionRule(
-            OrderedConfiguration<ClasspathAssetProtectionRule> configuration) 
+
+    /**
+     * Sensitive resource types, blocked when the resource's file name ends with the (lower-case) suffix.
+     */
+    private static final Map<String, String> BLOCKED_FILE_SUFFIXES = blockedFileSuffixes();
+
+    private static Map<String, String> blockedFileSuffixes()
     {
-        ClasspathAssetProtectionRule classFileRule = (s) -> s.toLowerCase().endsWith(".class");
-        configuration.add("ClassFile", classFileRule);
-        ClasspathAssetProtectionRule propertiesFileRule = (s) -> s.toLowerCase().endsWith(".properties");
-        configuration.add("PropertiesFile", propertiesFileRule);
-        ClasspathAssetProtectionRule xmlFileRule = (s) -> s.toLowerCase().endsWith(".xml");
-        configuration.add("XMLFile", xmlFileRule);
-        ClasspathAssetProtectionRule tmlFileRule = (s) -> s.toLowerCase().endsWith(".tml");
-        configuration.add("TemplateFile", tmlFileRule);
-        ClasspathAssetProtectionRule folderRule = (s) -> isFolderToBlock(s);
-        configuration.add("Folder", folderRule);
+        Map<String, String> map = new LinkedHashMap<>(22); // = 16 elements / 0.75 default load factor
+        map.put("ClassFile", ".class");
+        map.put("PropertiesFile", ".properties");
+        map.put("XMLFile", ".xml");
+        map.put("TemplateFile", ".tml");
+        map.put("MFFile", ".mf");
+        map.put("PEMFile", ".pem");
+        map.put("JKSFile", ".jks");
+        map.put("P12File", ".p12");
+        map.put("P8File", ".p8");
+        map.put("PKCS8File", ".pkcs8");
+        map.put("ASCFile", ".asc");
+        map.put("GPGFile", ".gpg");
+        map.put("PGPFile", ".pgp");
+        map.put("KeystoreFile", ".keystore");
+        map.put("KeyFile", ".key");
+        map.put("PFXFile", ".pfx");
+        return Collections.unmodifiableMap(map);
     }
-    
-    final private static boolean isFolderToBlock(String path) 
+
+     /**
+     * Sensitive resources, blocked by the complete (lower-case) resource's file name.
+     */
+    private static final Map<String, String> BLOCKED_FILE_NAMES = blockedFileNames();
+
+    private static Map<String, String> blockedFileNames()
+    {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("DockerFile", "dockerfile");
+        map.put("IdRSAFile", "id_rsa");
+        map.put("IdEd25519File", "id_ed25519");
+        map.put("IdEcdsaFile", "id_ecdsa");
+        return Collections.unmodifiableMap(map);
+    }
+    public static void contributeClasspathAssetProtectionRule(
+            OrderedConfiguration<ClasspathAssetProtectionRule> configuration,
+            @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE)
+            boolean productionMode) 
+    {
+        BLOCKED_FILE_SUFFIXES.forEach((id, suffix) ->
+                configuration.add(id, (s) -> lowerCaseLastSegment(s).endsWith(suffix)));
+
+        // Block all filenames (and last-segment folders) starting with a dot.
+        configuration.add("Dotfile", (s) -> lowerCaseLastSegment(s).startsWith("."));
+
+        BLOCKED_FILE_NAMES.forEach((id, blocked) ->
+                configuration.add(id, (s) -> lowerCaseLastSegment(s).equals(blocked)));
+
+        // Requests that resolve to a directory (rather than a file) are refused directly by
+        // ClasspathAssetRequestHandler, which can inspect the actual resolved Resource.
+        // A path string alone cannot distinguish a folder from an extension-less file here.
+
+        // TAP5-2835: Don't serve source maps in production
+        if (productionMode)
+        {
+            ClasspathAssetProtectionRule mapFileRule = (s) -> lowerCaseLastSegment(s).endsWith(".map");
+            configuration.add("MapFile", mapFileRule);
+        }
+    }
+
+    /**
+     * Returns the last path segment (the file name), lower-cased, with any backslashes normalized
+     * to forward slashes first.
+     */
+    private static String lowerCaseLastSegment(String path)
     {
         path = path.replace('\\', '/');
         final int lastIndex = path.lastIndexOf('/');
@@ -443,7 +502,13 @@ public class AssetsModule
         {
             path = path.substring(lastIndex);
         }
-        return !path.contains(".");
+        return path.toLowerCase();
     }
-    
+
+    @Primary
+    public static ContextAssetProtectionRule buildContextAssetProtectionRule(
+            List<ContextAssetProtectionRule> rules, ChainBuilder chainBuilder)
+    {
+        return chainBuilder.build(ContextAssetProtectionRule.class, rules);
+    }
 }
