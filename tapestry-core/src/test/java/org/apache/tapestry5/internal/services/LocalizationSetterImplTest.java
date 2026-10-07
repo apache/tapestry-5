@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2010, 2012 The Apache Software Foundation
+// Copyright 2006, 2009, 2010, 2012, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import static org.apache.tapestry5.commons.util.CollectionFactory.newSet;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SelectModel;
@@ -69,6 +70,118 @@ public class LocalizationSetterImplTest extends InternalBaseTestCase
         checkLocale(setter.toLocale("en"), "en", "", "");
         checkLocale(setter.toLocale("klingon_Gach"), "klingon", "GACH", "");
         checkLocale(setter.toLocale("klingon_Gach_snuff"), "klingon", "GACH", "snuff");
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Locale> localeCache(LocalizationSetterImpl setter)
+    {
+        return (Map<String, Locale>) TestBase.get(setter, "localeCache");
+    }
+
+    @Test
+    public void is_cacheable_locale_name()
+    {
+        // well-formed names are cacheable
+        assertTrue(LocalizationSetterImpl.isCacheableLocaleName("en"));
+        assertTrue(LocalizationSetterImpl.isCacheableLocaleName("en_US"));
+        assertTrue(LocalizationSetterImpl.isCacheableLocaleName("en_US_POSIX"));
+        assertTrue(LocalizationSetterImpl.isCacheableLocaleName("es_419"));       // numeric UN M.49 region
+        assertTrue(LocalizationSetterImpl.isCacheableLocaleName("klingon_Gach_snuff"));
+
+        // malformed / hostile names are not
+        assertFalse(LocalizationSetterImpl.isCacheableLocaleName(""));
+        assertFalse(LocalizationSetterImpl.isCacheableLocaleName("en_US_en_US"));  // more than three terms
+        assertFalse(LocalizationSetterImpl.isCacheableLocaleName("en-US"));        // non-alphanumeric separator
+        assertFalse(LocalizationSetterImpl.isCacheableLocaleName("en/../secret")); // path-ish junk
+
+        // a single over-long term, bounded by MAX_TERM_LENGTH...
+        assertFalse(LocalizationSetterImpl.isCacheableLocaleName(
+                repeat('a', LocalizationSetterImpl.MAX_TERM_LENGTH + 1)));
+
+        assertFalse(LocalizationSetterImpl.isCacheableLocaleName(
+                "en_US_" + repeat('a', LocalizationSetterImpl.MAX_TERM_LENGTH + 1)));
+
+        // a genuinely huge string is rejected without being fully scanned
+        assertFalse(LocalizationSetterImpl.isCacheableLocaleName(repeat('a', 8192)));
+    }
+
+    @Test
+    public void supported_locales_are_seeded_into_the_cache()
+    {
+        LocalizationSetterImpl setter = new LocalizationSetterImpl(null, null, null, "en,fr");
+
+        Map<String, Locale> cache = localeCache(setter);
+
+        // pre-seeded at construction, before any request can be processed
+        assertTrue(cache.containsKey("en"));
+        assertTrue(cache.containsKey("fr"));
+    }
+
+    @Test
+    public void locale_cache_is_size_bounded()
+    {
+        LocalizationSetterImpl setter = new LocalizationSetterImpl(null, null, null, "en");
+
+        // Fill the cache with distinct, well-formed short names.
+        // The cache must stop growing at its cap rather than expanding without bound.
+        for (int i = 0; i < LocalizationSetterImpl.MAX_LOCALE_CACHE_SIZE + 500; i++)
+        {
+            setter.toLocale("zz" + i);
+        }
+
+        assertTrue(localeCache(setter).size() <= LocalizationSetterImpl.MAX_LOCALE_CACHE_SIZE);
+    }
+
+    @Test
+    public void overly_long_locale_names_are_not_cached()
+    {
+        LocalizationSetterImpl setter = new LocalizationSetterImpl(null, null, null, "en");
+
+        // A well-formed short name is still cached (same instance returned on the second call)...
+        assertSame(setter.toLocale("de"), setter.toLocale("de"));
+
+        // ...large name is resolved without being retained, so it is re-parsed and
+        // a fresh (non-cached) instance comes back each time.
+        String longName = repeat('a', 8192);
+
+        assertNotNull(setter.toLocale(longName));
+        assertNotSame(setter.toLocale(longName), setter.toLocale(longName));
+        assertFalse(localeCache(setter).containsKey(longName));
+    }
+
+    @Test
+    public void attacker_supplied_locale_name_is_not_retained()
+    {
+        PersistentLocale pl = mockPersistentLocale();
+        ThreadLocale tl = mockThreadLocale();
+        Request request = mockRequest();
+
+        // an unresolvable, over-long name narrows to the default (first supported) locale
+        tl.setLocale(Locale.ENGLISH);
+
+        replay();
+
+        LocalizationSetterImpl setter = new LocalizationSetterImpl(request, pl, tl, "en,fr");
+
+        String attackerName = repeat('x', 8192);
+
+        setter.setNonPersistentLocaleFromLocaleName(attackerName);
+
+        verify();
+
+        assertFalse(localeCache(setter).containsKey(attackerName));
+    }
+
+    private static String repeat(char c, int count)
+    {
+        StringBuilder builder = new StringBuilder(count);
+
+        for (int i = 0; i < count; i++)
+        {
+            builder.append(c);
+        }
+
+        return builder.toString();
     }
 
     @Test
