@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2009-2012, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.beanmodel.services.*;
 import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.http.TapestryHttpSymbolConstants;
@@ -376,15 +375,42 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         String value = request.getParameter(InternalConstants.CONTAINER_PAGE_NAME);
 
-        String containingPageName = value == null
-                ? activePageName
-                : componentClassResolver.canonicalizePageName(value);
+        String containingPageName;
 
-        EventContext eventContext = contextPathEncoder.decodePath(joinPath(remainingPath));
-        EventContext activationContext = contextPathEncoder.decodePath(request.getParameter(InternalConstants.PAGE_CONTEXT_NAME));
+        if (value == null)
+        {
+            containingPageName = activePageName;
+        } else
+        {
+            // The event handler method executes on a component of the containing page, so the
+            // containing page's code runs for this request.
+            // It must pass the same gates as the active page.
+            if (!componentClassResolver.isPageName(value))
+            {
+                return null;
+            }
 
-        return new ComponentEventRequestParameters(activePageName, containingPageName, nestedComponentId, eventType,
-                activationContext, eventContext);
+            containingPageName = componentClassResolver.canonicalizePageName(value);
+
+            if (isWhitelistOnlyAndNotValid(containingPageName))
+            {
+                return null;
+            }
+        }
+
+        try
+        {
+            EventContext eventContext = contextPathEncoder.decodePath(joinPath(remainingPath));
+            EventContext activationContext = contextPathEncoder.decodePath(request.getParameter(InternalConstants.PAGE_CONTEXT_NAME));
+
+            return new ComponentEventRequestParameters(activePageName, containingPageName, nestedComponentId, eventType,
+                    activationContext, eventContext);
+        } catch (IllegalArgumentException e)
+        {
+            // TAP5-2436 (parity with checkIfPage()): a malformed context is a request for a
+            // resource that doesn't exist (404), not an exception report.
+            return null;
+        }
     }
 
     public PageRenderRequestParameters decodePageRenderRequest(Request request)

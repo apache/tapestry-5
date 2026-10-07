@@ -16,6 +16,7 @@ import org.apache.tapestry5.TrackableComponentEventCallback;
 import org.apache.tapestry5.beanmodel.services.*;
 import org.apache.tapestry5.commons.internal.util.TapestryException;
 import org.apache.tapestry5.http.services.Response;
+import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.Primary;
@@ -68,6 +69,18 @@ public class ComponentEventRequestHandlerImpl implements ComponentEventRequestHa
         }
 
         Page containerPage = cache.get(parameters.getContainingPageName());
+
+        // When the event targets a component from a different page than the active page, the
+        // containing page also has code executing for this request, and must also trigger its
+        // activation event.
+        // An empty context is used because the activation context in the request belongs to
+        // the active page.
+        if (containerPage != activePage
+                && pageActivator.activatePage(containerPage.getRootElement().getComponentResources(),
+                        new EmptyEventContext(), resultProcessor))
+        {
+            return;
+        }
 
         TrackableComponentEventCallback callback = new ComponentResultProcessorWrapper(resultProcessor);
 

@@ -1,4 +1,4 @@
-// Copyright 2008-2013 The Apache Software Foundation
+// Copyright 2008-2013, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.MetaDataConstants;
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.beanmodel.services.*;
 import org.apache.tapestry5.http.Link;
 import org.apache.tapestry5.http.LinkSecurity;
 import org.apache.tapestry5.http.services.Request;
@@ -54,7 +53,10 @@ public class RequestSecurityManagerImpl implements RequestSecurityManager
 
     public boolean checkForInsecureComponentEventRequest(ComponentEventRequestParameters parameters) throws IOException
     {
-        if (!needsRedirect(parameters.getActivePageName()))
+        // Both the active page and the containing page have code executing for this request,
+        // so @Secure on either must be honored.
+        if (!needsRedirect(parameters.getActivePageName())
+                && !needsRedirect(parameters.getContainingPageName()))
         {
             return false;
         }

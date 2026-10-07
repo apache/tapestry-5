@@ -2479,6 +2479,10 @@ public final class TapestryModule
     /**
      * Contributes:
      * <dl>
+     * <dt>WhitelistOnlyPage</dt>
+     * <dd>{@link org.apache.tapestry5.internal.services.WhitelistOnlyPageFilter} - Aborts handling of a component
+     * event that targets a {@link org.apache.tapestry5.annotations.WhitelistAccessOnly} page from a client that is
+     * not on the whitelist</dd>
      * <dt>OperationTracker</dt>
      * <dd>Tracks general information about the request using {@link OperationTracker}</dd>
      * <dt>UnknownComponentFilter (production mode only)</dt>
@@ -2493,6 +2497,9 @@ public final class TapestryModule
      */
     public void contributeComponentRequestHandler(OrderedConfiguration<ComponentRequestFilter> configuration, @Symbol(TapestryHttpSymbolConstants.PRODUCTION_MODE) boolean productionMode)
     {
+        // A security gate, so it runs ahead of everything else and in development mode as well
+        configuration.addInstance("WhitelistOnlyPage", WhitelistOnlyPageFilter.class, "before:*");
+
         configuration.addInstance("OperationTracker", RequestOperationTracker.class);
 
         if (productionMode)
