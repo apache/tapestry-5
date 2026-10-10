@@ -1,5 +1,6 @@
 plugins {
     id 'tapestry.junit5-spock-convention'
+    id 'tapestry.jmh-convention'
 }
 
 description = 'Project including common classes for tapestry-core, tapestry-ioc and beanmodel.'
