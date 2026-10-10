@@ -775,14 +775,154 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
         if (data == null) {
             return "\"\"";
         }
-        try {
-            JSONStringer stringer = new JSONStringer();
-            stringer.open(JSONStringer.Scope.NULL, "");
-            stringer.string(data);
-            stringer.close(JSONStringer.Scope.NULL, JSONStringer.Scope.NULL, "");
-            return stringer.toString();
-        } catch (RuntimeException e) {
-            throw new AssertionError();
+
+        StringBuilder out = new StringBuilder(data.length() + 8);
+        out.append('"');
+        escapeInto(out, data);
+        out.append('"');
+        return out.toString();
+    }
+
+    private static final char[] HEX_DIGITS = "0123456789abcdef".toCharArray();
+
+    /**
+     * Appends the escaped (but not quoted) form of {@code value} to {@code out}: the same
+     * character escaping rules as {@link #quote(String)}, without allocating an intermediate
+     * String or wrapping quotes.
+     * 
+     * <p>This is the direct-to-{@link StringBuilder} fast path used by {@code quote()} itself,
+     * which always targets a StringBuilder and is called often enough (once per printed string/key)
+     * that the {@link JSONPrintSink} indirection used by {@link #escapeInto(JSONPrintSink, String)}
+     * measurably costs more than it's worth here. See {@link #escapeInto(JSONPrintSink, String)}
+     * for the print-session variant.
+     */
+    static void escapeInto(StringBuilder out, String value) {
+        char currentChar = 0;
+
+        for (int i = 0, length = value.length(); i < length; i++) {
+            char previousChar = currentChar;
+            currentChar = value.charAt(i);
+
+            /*
+             * From RFC 4627, "All Unicode characters may be placed within the
+             * quotation marks except for the characters that must be escaped:
+             * quotation mark, reverse solidus, and the control characters
+             * (U+0000 through U+001F)."
+             */
+            switch (currentChar) {
+                case '"':
+                case '\\':
+                    out.append('\\').append(currentChar);
+                    break;
+
+                case '/':
+                    // it makes life easier for HTML embedding of javascript if we escape </ sequences
+                    if (previousChar == '<') {
+                        out.append('\\');
+                    }
+                    out.append(currentChar);
+                    break;
+
+                case '\t':
+                    out.append("\\t");
+                    break;
+
+                case '\b':
+                    out.append("\\b");
+                    break;
+
+                case '\n':
+                    out.append("\\n");
+                    break;
+
+                case '\r':
+                    out.append("\\r");
+                    break;
+
+                case '\f':
+                    out.append("\\f");
+                    break;
+
+                default:
+                    if (currentChar <= 0x1F || (currentChar >= 0x0080 && currentChar < 0x00a0) || (currentChar >= 0x2000 && currentChar < 0x2100)) {
+                        out.append('\\').append('u')
+                           .append(HEX_DIGITS[(currentChar >> 12) & 0xF])
+                           .append(HEX_DIGITS[(currentChar >> 8) & 0xF])
+                           .append(HEX_DIGITS[(currentChar >> 4) & 0xF])
+                           .append(HEX_DIGITS[currentChar & 0xF]);
+                    } else {
+                        out.append(currentChar);
+                    }
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Same escaping rules as {@link #escapeInto(StringBuilder, String)}, targeting a
+     * {@link JSONPrintSink} instead.
+     * 
+     * <p>Used by the print sessions, whose destination varies between an in-memory
+     * {@link StringBuilder} ({@code toString()}/{@code toCompactString()}) and a
+     * caller-supplied {@link java.io.PrintWriter} ({@code print(PrintWriter, boolean)}),
+     * so they can escape directly into whichever one they were constructed with.
+     * 
+     * <p>Note: Having dedicated methods for the types instead of a classifying mechanism
+     * keeps the call site monomorphic for the JVM, allowing for greater optimization
+     * potential.
+     */
+    static void escapeInto(JSONPrintSink out, String value) {
+        char currentChar = 0;
+
+        for (int i = 0, length = value.length(); i < length; i++) {
+            char previousChar = currentChar;
+            currentChar = value.charAt(i);
+
+            switch (currentChar) {
+                case '"':
+                case '\\':
+                    out.append('\\').append(currentChar);
+                    break;
+
+                case '/':
+                    if (previousChar == '<') {
+                        out.append('\\');
+                    }
+                    out.append(currentChar);
+                    break;
+
+                case '\t':
+                    out.append("\\t");
+                    break;
+
+                case '\b':
+                    out.append("\\b");
+                    break;
+
+                case '\n':
+                    out.append("\\n");
+                    break;
+
+                case '\r':
+                    out.append("\\r");
+                    break;
+
+                case '\f':
+                    out.append("\\f");
+                    break;
+
+                default:
+                    if (currentChar <= 0x1F || (currentChar >= 0x0080 && currentChar < 0x00a0) || (currentChar >= 0x2000 && currentChar < 0x2100)) {
+                        out.append('\\').append('u')
+                           .append(HEX_DIGITS[(currentChar >> 12) & 0xF])
+                           .append(HEX_DIGITS[(currentChar >> 8) & 0xF])
+                           .append(HEX_DIGITS[(currentChar >> 4) & 0xF])
+                           .append(HEX_DIGITS[currentChar & 0xF]);
+                    } else {
+                        out.append(currentChar);
+                    }
+                    break;
+            }
         }
     }
 
@@ -826,7 +966,6 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
         session.printSymbol('}');
     }
 
-
     /**
      * Prints a value (a JSONArray or JSONObject, or a value stored in an array or object) using
      * the session.
@@ -835,33 +974,24 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
      */
     static void printValue(JSONPrintSession session, Object value)
     {
+        // Orderd by (assumed) most common frequency in JSON
 
+        // Null Check: Must be first.
         if (value == null || value == NULL)
         {
             session.print("null");
             return;
         }
-        if (value instanceof JSONObject)
+
+        // String: Explicitly checking here prevents the most common 
+        // JSON type from falling through all other checks.
+        if (value instanceof String)
         {
-            ((JSONObject) value).print(session);
+            session.printQuoted((String) value);
             return;
         }
 
-        if (value instanceof JSONArray)
-        {
-            ((JSONArray) value).print(session);
-            return;
-        }
-
-        if (value instanceof JSONString)
-        {
-            String printValue = ((JSONString) value).toJSONString();
-
-            session.print(printValue);
-
-            return;
-        }
-
+        // Number: Highly common in JSON payloads.
         if (value instanceof Number)
         {
             String printValue = numberToString((Number) value);
@@ -869,14 +999,36 @@ public final class JSONObject extends JSONCollection implements Map<String, Obje
             return;
         }
 
-        if (value instanceof Boolean)
+        // JSONObject: The primary structural container.
+        if (value instanceof JSONObject)
         {
-            session.print(value.toString());
-
+            ((JSONObject) value).print(session);
             return;
         }
 
-        // Otherwise it really should just be a string. Nothing else can go in.
+        // Boolean: Common, but usually fewer instances per payload than numbers.
+        if (value instanceof Boolean)
+        {
+            session.print(value.toString());
+            return;
+        }
+
+        // JSONArray: Generally fewer arrays than objects in nested structures.
+        if (value instanceof JSONArray)
+        {
+            ((JSONArray) value).print(session);
+            return;
+        }
+
+        // JSONString: Kept near the bottom assuming it is a custom wrapper.
+        if (value instanceof JSONString)
+        {
+            String printValue = ((JSONString) value).toJSONString();
+            session.print(printValue);
+            return;
+        }
+
+        // Fallback for any other unexpected objects
         session.printQuoted(value.toString());
     }
 

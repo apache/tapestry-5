@@ -13,7 +13,7 @@
 /**
  * Repackaged, improved (and tested) version of code originally https://github.com/tdunning/open-json
  *
- * Starting in release 5.4, {@link org.apache.tapestry5.json.JSONObject} and {@link org.apache.tapestry5.json.JSONArray}
+ * Starting in release 5.4, {@link org.apache.tapestry5.json.improved.JSONObject} and {@link org.apache.tapestry5.json.improved.JSONArray}
  * are serializable.
  */
-package org.apache.tapestry5.json;
+package org.apache.tapestry5.json.improved;
