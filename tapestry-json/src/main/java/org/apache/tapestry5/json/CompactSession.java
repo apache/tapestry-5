@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,16 +18,21 @@ import java.io.PrintWriter;
 
 /**
  * Prints the JSON content compactly, with no indentation or extra whitespace.
- * 
+ *
  * @since 5.2.0
  */
 class CompactSession implements JSONPrintSession
 {
-    private final PrintWriter writer;
+    private final JSONPrintSink out;
+
+    CompactSession(StringBuilder out)
+    {
+        this.out = new StringBuilderPrintSink(out);
+    }
 
     public CompactSession(PrintWriter writer)
     {
-        this.writer = writer;
+        this.out = new WriterPrintSink(writer);
     }
 
     @Override
@@ -51,7 +56,7 @@ class CompactSession implements JSONPrintSession
     @Override
     public JSONPrintSession print(String value)
     {
-        writer.print(value);
+        out.append(value);
 
         return this;
     }
@@ -59,13 +64,17 @@ class CompactSession implements JSONPrintSession
     @Override
     public JSONPrintSession printQuoted(String value)
     {
-        return print(JSONObject.quote(value));
+        out.append('"');
+        JSONObject.escapeInto(out, value);
+        out.append('"');
+
+        return this;
     }
 
     @Override
     public JSONPrintSession printSymbol(char symbol)
     {
-        writer.print(symbol);
+        out.append(symbol);
 
         return this;
     }

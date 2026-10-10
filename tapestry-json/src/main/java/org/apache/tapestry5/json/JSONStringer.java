@@ -57,7 +57,10 @@ import java.util.List;
  * self-use by overrideable methods is not specified. See <i>Effective Java</i>
  * Item 17, "Design and Document or inheritance or else prohibit it" for further
  * information.
+ * 
+ * @deprecated in 5.10.0 without a replacement.
  */
+@Deprecated
 class JSONStringer {
 
     /**
