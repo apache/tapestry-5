@@ -165,6 +165,11 @@ public class DelegatingRequest implements Request
         return request.getRemoteHost();
     }
 
+    public String getRemoteAddr()
+    {
+        return request.getRemoteAddr();
+    }
+
     public boolean isSessionInvalidated()
     {
         return request.isSessionInvalidated();

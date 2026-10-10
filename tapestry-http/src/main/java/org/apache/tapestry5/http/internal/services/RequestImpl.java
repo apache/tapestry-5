@@ -234,7 +234,12 @@ public class RequestImpl implements Request
     {
         return request.getRemoteHost();
     }
-    
+
+    public String getRemoteAddr()
+    {
+        return request.getRemoteAddr();
+    }
+
     /**
      * Converts an enumeration (of Strings) into a sorted list of Strings.
      */
