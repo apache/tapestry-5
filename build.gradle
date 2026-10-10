@@ -297,6 +297,16 @@ tasks.register('aggregateJavadoc', Javadoc) {
     }
 }
 
+// TAP5-2839: Add JMH
+tasks.register('jmhCompileAll') {
+    group = 'benchmark'
+    description = 'Compiles the JMH benchmark sources of every module that has them'
+
+    dependsOn provider {
+        rootProject.getTasksByName('jmhClasses', true)
+    }
+}
+
 tasks.register('typeScriptDocs') {
     group = 'documentation'
     description = 'Builds typedoc documentation for all TypeScript sources'

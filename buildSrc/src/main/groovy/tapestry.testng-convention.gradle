@@ -14,7 +14,7 @@
 //   tapestry.testing-base-convention       platform runner, BOM, logging
 //     └─ tapestry.testng-convention          + TestNG + EasyMock + testng-engine (this file)
 
-import t5build.IntegrationTestMutex
+import t5build.Mutex
 
 plugins {
     id 'tapestry.testing-base-convention'
@@ -29,12 +29,12 @@ dependencies {
 // Every Selenium suite binds the same ports, so no two of them may run at once.
 // Gradle's build services express exactly that: one permit, handed to one integration
 // test task at a time, while everything else in the build still runs in parallel.
-def integrationTestMutex = gradle.sharedServices.registerIfAbsent('integrationTestMutex', IntegrationTestMutex) {
+def mutex = gradle.sharedServices.registerIfAbsent('mutex', Mutex) {
     maxParallelUsages = 1
 }
 
 tasks.withType(Test).configureEach {
     if (name == 'testNG') {
-        usesService(integrationTestMutex)
+        usesService(mutex)
     }
 }

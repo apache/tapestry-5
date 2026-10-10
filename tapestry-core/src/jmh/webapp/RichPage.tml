@@ -1,0 +1,40 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+    <head>
+        <title>${title}</title>
+    </head>
+    <body>
+        <h1>${title}</h1>
+
+        <t:if test="flag">
+            <p>Shown when the flag is set.</p>
+            <p:else>
+                <p>Shown otherwise.</p>
+            </p:else>
+        </t:if>
+
+        <ul class="items">
+            <li t:type="loop" source="items" value="item">
+                <span class="label">${item}</span>
+                <t:if test="item">
+                    <em>present</em>
+                </t:if>
+            </li>
+        </ul>
+
+        <t:form t:id="form">
+            <t:label for="text"/>
+            <t:textfield t:id="text" value="text"/>
+
+            <t:label for="flagField"/>
+            <t:checkbox t:id="flagField" value="flag"/>
+
+            <t:submit t:id="submit" value="literal:Save"/>
+        </t:form>
+
+        <div class="footer">
+            <t:any element="p" class="note">
+                Assembled from ${componentResources.pageName}.
+            </t:any>
+        </div>
+    </body>
+</html>
