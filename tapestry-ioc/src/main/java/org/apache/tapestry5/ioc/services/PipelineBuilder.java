@@ -14,6 +14,7 @@ package org.apache.tapestry5.ioc.services;
 
 import org.slf4j.Logger;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -62,5 +63,18 @@ public interface PipelineBuilder
      * @return an object that encapsulates the filters and the default implementation
      */
     <S, F> S build(Logger logger, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters);
+
+    /**
+     * The pipelines assembled so far, in the order they were assembled.
+     *
+     * <p>A pipeline is assembled when the service it implements is first realized, so the list grows as the application runs.
+     *
+     * @return the assembled pipelines, or an empty list for an implementation that does not keep track of them
+     * @since 5.10.0
+     */
+    default List<AssembledPipeline> getAssembledPipelines()
+    {
+        return Collections.emptyList();
+    }
 
 }

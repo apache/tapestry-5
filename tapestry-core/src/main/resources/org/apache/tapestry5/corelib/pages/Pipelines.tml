@@ -1,0 +1,60 @@
+<t:block id="content"
+         xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+
+    <t:unless test="productionMode">
+        <p:then>
+            <p>
+                <strong>${pipelines.size()}</strong> pipelines assembled so far.
+                A pipeline is assembled when the service it implements is first realized,
+                so this list grows as the application runs.
+            </p>
+            <ul class="list-group">
+                <li class="list-group-item" t:type="Loop" t:source="pipelines" t:value="pipeline"
+                    index="pipelineIndex">
+                    <span class="badge">${pipeline.filters.size()}</span>
+                    <a href="#${pipelineClientId}">
+                        <code>${pipeline.serviceInterface.simpleName}</code>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="panel panel-default" t:type="Loop" t:source="pipelines" t:value="pipeline"
+                 index="pipelineIndex" id="${pipelineClientId}">
+
+                <div class="panel-heading">
+                    <code>${pipeline.serviceInterface.name}</code>
+                </div>
+
+                <div class="panel-body">
+                    <p>
+                        Filtered by: <code>${pipeline.filterInterface.name}</code>
+                    </p>
+
+                    <t:if test="pipeline.filters.empty">
+                        <p:then>
+                            <p class="text-muted">No filters contributed; the pipeline is just its terminator.</p>
+                        </p:then>
+                        <p:else>
+                            <ol>
+                                <li t:type="Loop" t:source="pipeline.filters" t:value="filter">
+                                    <code>${filter}</code>
+                                </li>
+                            </ol>
+                        </p:else>
+                    </t:if>
+
+                    <p>
+                        Terminator:
+                        <code>${pipeline.terminator}</code>
+                    </p>
+                </div>
+            </div>
+        </p:then>
+        <p:else>
+            <p>
+                <em>The filters of each pipeline are only shown in development mode.</em>
+            </p>
+        </p:else>
+    </t:unless>
+
+</t:block>

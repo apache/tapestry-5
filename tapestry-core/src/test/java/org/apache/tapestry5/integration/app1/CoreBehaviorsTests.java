@@ -14,6 +14,7 @@ package org.apache.tapestry5.integration.app1;
 
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.integration.app1.pages.RenderErrorDemo;
+import org.apache.tapestry5.services.ComponentRequestHandler;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.annotations.Test;
@@ -741,6 +742,21 @@ public class CoreBehaviorsTests extends App1TestCase
         open(getBaseURL() + "t5dashboard/services");
 
         assertTextPresent("services defined in the IoC Registry");
+    }
+
+    /**
+     * This basically checks that the pipelines page does not error.
+     */
+    @Test
+    public void pipelines()
+    {
+        open(getBaseURL() + "t5dashboard/pipelines");
+
+        assertTextPresent("pipelines assembled so far");
+
+        // Every request goes through this pipeline, so it has certainly been assembled by now.
+
+        assertTextPresent(ComponentRequestHandler.class.getName());
     }
 
     /**
