@@ -40,6 +40,7 @@ public class DashboardModule
     {
         configuration.add("Pages", new DashboardTab("Pages", "core/PageCatalog"));
         configuration.add("Services", new DashboardTab("Services", "core/ServiceStatus"));
+        configuration.add("Pipelines", new DashboardTab("Pipelines", "core/Pipelines"));
         configuration.add("Libraries", new DashboardTab("ComponentLibraries", "core/ComponentLibraries"));
         configuration.add("PageDependencyGraph", new DashboardTab("PageDependencyGraph", "core/PageDependencyGraph"));
         if (!productionMode && multipleClassLoaders)
