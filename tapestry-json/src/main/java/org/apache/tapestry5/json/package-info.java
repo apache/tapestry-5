@@ -16,4 +16,4 @@
  * Starting in release 5.4, {@link org.apache.tapestry5.json.improved.JSONObject} and {@link org.apache.tapestry5.json.improved.JSONArray}
  * are serializable.
  */
-package org.apache.tapestry5.json.improved;
+package org.apache.tapestry5.json;
