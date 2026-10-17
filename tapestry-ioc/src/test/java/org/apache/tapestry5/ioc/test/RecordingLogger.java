@@ -109,8 +109,8 @@ public class RecordingLogger extends AbstractLogger
     protected void handleNormalizedLoggingCall(Level level, Marker marker, String messagePattern, Object[] arguments,
                                                Throwable throwable)
     {
-        String message = arguments == null ? messagePattern : MessageFormatter.basicArrayFormat(messagePattern,
-                arguments);
+        String message = arguments == null ? messagePattern : MessageFormatter.arrayFormat(messagePattern,
+                arguments).getMessage();
 
         events.add(new Event(level, message));
     }
