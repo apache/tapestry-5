@@ -27,7 +27,7 @@ import org.apache.tapestry5.ioc.internal.services.PipelineDescriber;
  * The filters and the terminator are recorded as descriptions, taken when the pipeline was assembled,
  * rather than as objects, so that a pipeline no longer in use is not kept alive by this record.
  *
- * @since 5.10.0
+ * @since 5.9.2
  */
 public final class AssembledPipeline
 {
