@@ -70,7 +70,7 @@ public interface PipelineBuilder
      * <p>A pipeline is assembled when the service it implements is first realized, so the list grows as the application runs.
      *
      * @return the assembled pipelines, or an empty list for an implementation that does not keep track of them
-     * @since 5.10.0
+     * @since 5.9.2
      */
     default List<AssembledPipeline> getAssembledPipelines()
     {

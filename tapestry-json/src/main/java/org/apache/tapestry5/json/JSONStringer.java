@@ -58,7 +58,7 @@ import java.util.List;
  * Item 17, "Design and Document or inheritance or else prohibit it" for further
  * information.
  * 
- * @deprecated in 5.10.0 without a replacement.
+ * @deprecated in 5.9.2 without a replacement.
  */
 @Deprecated
 class JSONStringer {
