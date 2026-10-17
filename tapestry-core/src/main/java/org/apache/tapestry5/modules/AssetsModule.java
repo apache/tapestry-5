@@ -334,7 +334,8 @@ public class AssetsModule
                                                       ClasspathAssetAliasManager classpathAssetAliasManager,
                                                       ResourceStreamer streamer,
                                                       AssetSource assetSource,
-                                                      ClasspathAssetProtectionRule classpathAssetProtectionRule)
+                                                      ClasspathAssetProtectionRule classpathAssetProtectionRule,
+                                                      ContextAssetProtectionRule contextAssetProtectionRule)
     {
         Map<String, String> mappings = classpathAssetAliasManager.getMappings();
 
@@ -346,7 +347,7 @@ public class AssetsModule
         }
 
         configuration.add(RequestConstants.CONTEXT_FOLDER,
-                new ContextAssetRequestHandler(streamer, contextAssetFactory.getRootResource()));
+                new ContextAssetRequestHandler(streamer, contextAssetFactory.getRootResource(), contextAssetProtectionRule));
 
         configuration.add(RequestConstants.STACK_FOLDER, stackAssetRequestHandler);
 
