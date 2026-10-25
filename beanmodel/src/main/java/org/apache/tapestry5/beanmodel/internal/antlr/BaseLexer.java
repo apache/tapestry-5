@@ -49,17 +49,11 @@ public abstract class BaseLexer extends Lexer
      * Scans identifiers and keywords here, and leaves every other token to the generated lexer.
      * An identifier is a Java identifier without identifier-ignorable characters, read by code point.
      * A keyword is an identifier that matches NULL, TRUE, FALSE or THIS, ignoring ASCII case.
+     * Whitespace comes from the generated lexer as a hidden token, so each call starts on a token boundary.
      */
     @Override
     public Token nextToken()
     {
-        // Whitespace has to go first, or the generated lexer would skip it and then read the identifier behind it.
-
-        while (isWhitespace(input.LA(1)))
-        {
-            input.consume();
-        }
-
         if (!isIdentifierStart(codePointAt(1)))
         {
             return super.nextToken();
@@ -80,11 +74,6 @@ public abstract class BaseLexer extends Lexer
         state.type = identifierType(getText());
 
         return emit();
-    }
-
-    private static boolean isWhitespace(int c)
-    {
-        return c == ' ' || c == '\t' || c == '\n' || c == '\r';
     }
 
     private static boolean isIdentifierStart(int codePoint)

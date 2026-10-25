@@ -64,6 +64,8 @@ fragment QUOTE
 // Identifiers and the case-insensitive keywords are scanned by BaseLexer.nextToken(),
 // because their characters are defined by Character.isJavaIdentifierStart/Part.
 // These rules only provide the token types.
+// BaseLexer takes every character that can start an identifier before the rules below see it.
+// A new keyword, or any token starting with such a character, therefore belongs in BaseLexer.
 
 fragment NULL
 	:	{this.getClass(); /* Fix java.lang.VerifyError: Stack size too large */};
@@ -82,7 +84,10 @@ fragment IDENTIFIER
 SAFEDEREF 
 	: 	'?.';
 
-WS 	:	(' '|'\t'|'\n'|'\r')+ { skip(); };
+// Whitespace is emitted on the hidden channel rather than skipped, so that the generated lexer returns
+// after it and BaseLexer.nextToken() can check for an identifier behind it. The parser never sees it.
+
+WS 	:	(' '|'\t'|'\n'|'\r')+ { $channel = HIDDEN; };
 
 
 // Literal strings are always inside single quotes.
