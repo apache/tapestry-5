@@ -19,7 +19,6 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -44,14 +43,12 @@ public class DefaultCharsetTest
         assertEquals(StandardCharsets.US_ASCII, Charset.defaultCharset());
     }
 
-    @Disabled("The parser round-trips the expression through the default charset")
     @Test
     void non_ascii_identifier_is_parsed()
     {
         assertEquals(Chinese.class, source.create(Root.class, "中文").get(new Root()).getClass());
     }
 
-    @Disabled("The parser round-trips the expression through the default charset")
     @Test
     void non_ascii_identifier_heads_a_chain()
     {

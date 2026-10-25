@@ -31,9 +31,6 @@ import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionPa
 import static org.apache.tapestry5.beanmodel.internal.antlr.PropertyExpressionParser.TRUE;
 
 import org.apache.tapestry5.ioc.annotations.ComponentLayer;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
@@ -48,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.Tree;
 import org.apache.tapestry5.beanmodel.PropertyConduit;
@@ -508,7 +505,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
                     return;
 
                 default:
-                    throw unexpectedNodeType(node, IDENTIFIER, INVOKE, RANGEOP, LIST, NOT);
+                    throw unexpectedNodeType(node, IDENTIFIER, INVOKE, RANGEOP, LIST, MAP, NOT);
             }
         }
 
@@ -885,7 +882,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
 
                     default:
                         throw unexpectedNodeType(node, TRUE, FALSE, INTEGER, DECIMAL, STRING, DEREF, SAFEDEREF,
-                                IDENTIFIER, INVOKE, LIST, NOT, THIS, NULL);
+                                IDENTIFIER, INVOKE, LIST, MAP, NOT, THIS, NULL);
                 }
             }
         }
@@ -1572,19 +1569,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
 
     private Tree parse(String expression)
     {
-        InputStream is = new ByteArrayInputStream(expression.getBytes());
-
-        ANTLRInputStream ais;
-
-        try
-        {
-            ais = new ANTLRInputStream(is);
-        } catch (IOException ex)
-        {
-            throw new RuntimeException(ex);
-        }
-
-        PropertyExpressionLexer lexer = new PropertyExpressionLexer(ais);
+        PropertyExpressionLexer lexer = new PropertyExpressionLexer(new ANTLRStringStream(expression));
 
         CommonTokenStream tokens = new CommonTokenStream(lexer);
 
