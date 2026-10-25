@@ -1310,13 +1310,27 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
 
             while (true)
             {
+                // getMethods() returns them in no particular order. A bridge method has an erased return type,
+                // so it is used only when nothing else matches: javac makes a public method inherited from a
+                // non-public class reachable through a bridge alone.
+
+                Method bridge = null;
 
                 for (Method method : searchType.getMethods())
                 {
                     if (method.getParameterTypes().length == parameterCount
                             && method.getName().equalsIgnoreCase(methodName))
-                        return method;
+                    {
+                        if (!method.isBridge())
+                            return method;
+
+                        if (bridge == null)
+                            bridge = method;
+                    }
                 }
+
+                if (bridge != null)
+                    return bridge;
 
                 // TAP5-330
                 if (searchType != Object.class)
