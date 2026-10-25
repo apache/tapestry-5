@@ -118,7 +118,10 @@ public class AppModule
 
                 // This is all a bit jury-rigged together. This is for running the app
                 // interactively; Selenium doesn't seem to handle the transition to https.
-                int port = secure ? 8443 : 9090;
+                // The integration test variants run on other ports, set by the same properties as SeleniumTestCase.
+                int port = secure
+                        ? Integer.getInteger("tapestry.ssl-port", 8443)
+                        : Integer.getInteger("tapestry.port", 9090);
 
                 return String.format("%s://localhost:%d", protocol, port);
             }
