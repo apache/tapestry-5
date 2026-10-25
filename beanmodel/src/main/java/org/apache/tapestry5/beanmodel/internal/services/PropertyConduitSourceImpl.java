@@ -463,10 +463,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
 
                 case RANGEOP:
 
-                    // As currently implemented, RANGEOP can only appear as the
-                    // top level, which
-                    // means we didn't need the navigate method after all.
-
                     implementRangeOpGetter(node);
                     implementNoOpSetter();
 
@@ -731,11 +727,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
             {
                 public void doBuild(InstructionBuilder builder)
                 {
-                    // Put the delegate on top of the stack
-
-                    builder.loadThis().getField(getDelegateField());
-
-                    invokeMethod(builder, DelegateMethods.RANGE, rangeNode, 0);
+                    implementSubexpression(builder, null, rangeNode);
 
                     builder.returnResult();
                 }
@@ -880,9 +872,17 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource
 
                         return Void.class;
 
+                    case RANGEOP:
+
+                        builder.loadThis().getField(getDelegateField());
+
+                        invokeMethod(builder, DelegateMethods.RANGE, node, 0);
+
+                        return IntegerRange.class;
+
                     default:
                         throw unexpectedNodeType(node, TRUE, FALSE, INTEGER, DECIMAL, STRING, DEREF, SAFEDEREF,
-                                IDENTIFIER, INVOKE, LIST, MAP, NOT, THIS, NULL);
+                                IDENTIFIER, INVOKE, LIST, MAP, NOT, THIS, NULL, RANGEOP);
                 }
             }
         }

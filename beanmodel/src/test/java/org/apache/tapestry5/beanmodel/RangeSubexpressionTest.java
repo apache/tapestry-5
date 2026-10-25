@@ -22,13 +22,11 @@ import java.util.Map;
 import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
 import org.apache.tapestry5.commons.util.IntegerRange;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
  * A range is valid wherever an expression is valid (TAP5-2808).
  */
-@Disabled("TAP5-2808: The generator rejects a range below the top level")
 public class RangeSubexpressionTest
 {
     private static PropertyConduitSource source;
