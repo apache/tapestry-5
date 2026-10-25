@@ -61,65 +61,20 @@ COLON	:	':';
 fragment QUOTE
 	:	'\'';
 
-// Clumsy but effective approach to case-insensitive identifiers.
+// Identifiers and the case-insensitive keywords are scanned by BaseLexer.nextToken(),
+// because their characters are defined by Character.isJavaIdentifierStart/Part.
+// These rules only provide the token types.
 
-fragment A
-	:	('a' | 'A');
-fragment E
-	:	('e' | 'E');
-fragment F
-	:	('f' | 'F');	
-fragment H
-	:	('h' | 'H');
-fragment I
-	:	('i' | 'I');
-fragment L 
-	: 	('l' | 'L');
-fragment N 
-	:	('n'|'N');
-fragment R
-	:	('r' | 'R');
-fragment S
-	:	('s' | 'S');
-fragment T 
-	:	('t' | 'T');
-fragment U 
-	:	('u' | 'U');
-
-// Identifiers are case insensitive
-
-NULL 	:	N U L L;
-TRUE	:	T R U E;
-FALSE	:	F A L S E;
-THIS	:	T H I S;
-
-IDENTIFIER 
-    :   JAVA_ID_START (JAVA_ID_PART)*
-    ;
-
-fragment
-JAVA_ID_START
-    :  '\u0024'
-    |  '\u0041'..'\u005a'
-    |  '\u005f'
-    |  '\u0061'..'\u007a'
-    |  '\u00c0'..'\u00d6'
-    |  '\u00d8'..'\u00f6'
-    |  '\u00f8'..'\u00ff'
-    |  '\u0100'..'\u1fff'
-    |  '\u3040'..'\u318f'
-    |  '\u3300'..'\u337f'
-    |  '\u3400'..'\u3d2d'
-    |  '\u4e00'..'\u9fff'
-    |  '\uf900'..'\ufaff'
-    ;
-
-fragment
-JAVA_ID_PART
-    :  JAVA_ID_START
-    |  '\u0030'..'\u0039'
-    ;
-
+fragment NULL
+	:	{this.getClass(); /* Fix java.lang.VerifyError: Stack size too large */};
+fragment TRUE
+	:	{this.getClass(); /* Fix java.lang.VerifyError: Stack size too large */};
+fragment FALSE
+	:	{this.getClass(); /* Fix java.lang.VerifyError: Stack size too large */};
+fragment THIS
+	:	{this.getClass(); /* Fix java.lang.VerifyError: Stack size too large */};
+fragment IDENTIFIER
+	:	{this.getClass(); /* Fix java.lang.VerifyError: Stack size too large */};
 
 // The Safe Dereference operator understands not to de-reference through
 // a null.

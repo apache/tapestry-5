@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -49,7 +48,6 @@ public class JavaIdentifierTest
         assertTrue(ex.getMessage().startsWith(prefix), ex.getMessage());
     }
 
-    @Disabled("The ANTLR lexer accepts only a fixed list of character ranges")
     @ParameterizedTest
     @ValueSource(strings = {"한글", "µx", "€y", "㴮z", "𠀀w"})
     void java_identifier_start_characters_are_accepted(String expression)
@@ -57,19 +55,30 @@ public class JavaIdentifierTest
         assertEquals(expression + "-value", get(expression));
     }
 
-    @Disabled("The ANTLR lexer accepts only a fixed list of character ranges")
     @Test
     void hangul_identifier_heads_a_chain()
     {
         assertEquals("b-value", get("가.b"));
     }
 
-    @Disabled("The ANTLR lexer accepts U+1680 and U+0378 in identifiers")
     @ParameterizedTest
     @ValueSource(strings = {"\u1680x", "\u0378y"})
     void characters_that_are_no_java_identifier_start_are_rejected(String expression)
     {
         assertParseError(expression);
+    }
+
+    @Test
+    void whitespace_around_non_ascii_identifier_is_ignored()
+    {
+        assertEquals("b-value", get(" 가 . b "));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"thıs", "falſe"})
+    void keyword_lookalikes_with_non_ascii_letters_are_identifiers(String expression)
+    {
+        assertEquals(expression + "-value", get(expression));
     }
 
     @ParameterizedTest
@@ -114,6 +123,16 @@ public class JavaIdentifierTest
         public String getFoo()
         {
             return "foo-value";
+        }
+
+        public String getThıs()
+        {
+            return "thıs-value";
+        }
+
+        public String getFalſe()
+        {
+            return "falſe-value";
         }
     }
 

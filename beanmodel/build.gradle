@@ -24,6 +24,12 @@ tasks.named('clean') {
     delete generateGrammarSource.outputDirectory
 }
 
+tasks.named('generateGrammarSource', AntlrTask) {
+    // The parser imports the token types of the lexer, but an incremental run regenerates only
+    // the changed grammar. A non-incremental input makes every change regenerate both.
+    inputs.files(source).withPropertyName('allGrammars').withPathSensitivity(PathSensitivity.RELATIVE)
+}
+
 tasks.named('compileJava', JavaCompile) {
     dependsOn generateGrammarSource
     options.fork = true
