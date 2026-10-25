@@ -18,9 +18,6 @@ dependencies {
     implementation(libs.antlr.runtime) {
         exclude group: 'org.antlr', module: 'stringtemplate'
     }
-
-    testImplementation platform(libs.spock.bom)
-    testImplementation libs.spock.core
 }
 
 tasks.named('clean') {
@@ -44,4 +41,29 @@ sourceSets {
             srcDir generateGrammarSource.outputDirectory
         }
     }
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform {
+        excludeTags 'default-charset'
+    }
+}
+
+// Parsing must not depend on the platform default charset, which is not UTF-8 everywhere before Java 18.
+def testDefaultCharset = tasks.register('testDefaultCharset', Test) {
+    description = 'Runs the tests tagged default-charset under a US-ASCII default charset.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    useJUnitPlatform {
+        includeTags 'default-charset'
+    }
+
+    systemProperty 'file.encoding', 'US-ASCII'
+}
+
+tasks.named('check') {
+    dependsOn testDefaultCharset
 }

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011, 2026 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,15 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.lang.reflect.Method;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -28,38 +36,54 @@ import org.apache.tapestry5.beanmodel.PropertyConduit2;
 import org.apache.tapestry5.beanmodel.internal.InternalPropertyConduit;
 import org.apache.tapestry5.beanmodel.internal.services.Invariant;
 import org.apache.tapestry5.beanmodel.services.PropertyConduitSource;
-import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.commons.util.IntegerRange;
 import org.apache.tapestry5.integration.app1.data.IntegerHolder;
 import org.apache.tapestry5.internal.bindings.PropBindingFactoryTest;
-import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.util.Holder;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.RegistryBuilder;
+import org.apache.tapestry5.modules.TapestryModule;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Most of the testing occurs inside {@link PropBindingFactoryTest} (due to
  * historical reasons).
  */
-public class PropertyConduitSourceImplTest extends InternalBaseTestCase
+public class PropertyConduitSourceImplTest
 {
-    private PropertyConduitSource source;
+    private static Registry registry;
 
-    @BeforeClass
-    public void setup()
+    private static PropertyConduitSource source;
+
+    @BeforeAll
+    static void setup()
     {
-        source = getObject(PropertyConduitSource.class, null);
+        registry = new RegistryBuilder().add(TapestryModule.class, ForceDevelopmentModeModule.class).build();
+        registry.performRegistryStartup();
+
+        source = registry.getObject(PropertyConduitSource.class, null);
     }
 
-    @AfterClass
-    public void cleanup()
+    @AfterAll
+    static void cleanup()
     {
+        registry.shutdown();
+
+        registry = null;
         source = null;
     }
 
+    @AfterEach
+    void cleanupThread()
+    {
+        registry.cleanupThread();
+    }
+
     @Test
-    public void literal_conduits_have_invariant_annotation()
+    void literal_conduits_have_invariant_annotation()
     {
         PropertyConduit pc = source.create(CompositeBean.class, "12345");
 
@@ -67,11 +91,11 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         assertNotNull(annotation);
 
-        assertSame(annotation.annotationType(), Invariant.class);
+        assertSame(Invariant.class, annotation.annotationType());
     }
 
     @Test
-    public void range_variable_to()
+    void range_variable_to()
     {
         PropertyConduit pc = source.create(IntegerHolder.class, "10..value");
         IntegerHolder h = new IntegerHolder();
@@ -80,11 +104,11 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         IntegerRange ir = (IntegerRange) pc.get(h);
 
-        assertEquals(ir, new IntegerRange(10, 5));
+        assertEquals(new IntegerRange(10, 5), ir);
     }
 
     @Test
-    public void range_variable_from()
+    void range_variable_from()
     {
         PropertyConduit pc = source.create(IntegerHolder.class, "value..99");
         IntegerHolder h = new IntegerHolder();
@@ -93,112 +117,120 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         IntegerRange ir = (IntegerRange) pc.get(h);
 
-        assertEquals(ir, new IntegerRange(72, 99));
+        assertEquals(new IntegerRange(72, 99), ir);
     }
 
     @Test
-    public void literal_conduits_are_not_updateable()
+    void literal_conduits_are_not_updateable()
     {
         PropertyConduit pc = source.create(CompositeBean.class, "12345");
         CompositeBean bean = new CompositeBean();
 
-        try
-        {
-            pc.set(bean, 42);
-            unreachable();
-        } catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(), "Literal values are not updateable.");
-        }
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> pc.set(bean, 42));
+
+        assertEquals("Literal values are not updateable.", ex.getMessage());
     }
 
     @Test
-    public void this_literal_conduit_is_not_updateable()
+    void this_literal_conduit_is_not_updateable()
     {
         PropertyConduit normal = source.create(CompositeBean.class, "this");
         CompositeBean bean = new CompositeBean();
 
-        try
-        {
-            normal.set(bean, 42);
-            unreachable();
-        } catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(), "Literal values are not updateable.");
-        }
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> normal.set(bean, 42));
+
+        assertEquals("Literal values are not updateable.", ex.getMessage());
     }
 
     @Test
-    public void question_dot_operator_for_object_type()
+    void question_dot_operator_has_property_name_of_last_term()
     {
         InternalPropertyConduit normal = (InternalPropertyConduit) source.create(CompositeBean.class,
                 "simple.firstName");
         InternalPropertyConduit smart = (InternalPropertyConduit) source.create(CompositeBean.class,
                 "simple?.firstName");
 
+        assertEquals("firstName", normal.getPropertyName());
+        assertEquals("firstName", smart.getPropertyName());
+    }
+
+    @Test
+    void dot_operator_read_throws_for_null_object()
+    {
+        PropertyConduit normal = source.create(CompositeBean.class, "simple.firstName");
         CompositeBean bean = new CompositeBean();
         bean.setSimple(null);
 
-        assertEquals(normal.getPropertyName(), "firstName");
-        assertEquals(smart.getPropertyName(), "firstName");
+        assertThrows(NullPointerException.class, () -> normal.get(bean));
+    }
 
-        try
-        {
-            normal.get(bean);
-            unreachable();
-        } catch (NullPointerException ex)
-        {
-            // Expected.
-        }
+    @Test
+    void question_dot_operator_read_yields_null_for_null_object()
+    {
+        PropertyConduit smart = source.create(CompositeBean.class, "simple?.firstName");
+        CompositeBean bean = new CompositeBean();
+        bean.setSimple(null);
 
         assertNull(smart.get(bean));
+    }
 
-        try
-        {
-            normal.set(bean, "Howard");
-            unreachable();
-        } catch (NullPointerException ex)
-        {
-            // Expected.
-        }
+    @Test
+    void dot_operator_write_throws_for_null_object()
+    {
+        PropertyConduit normal = source.create(CompositeBean.class, "simple.firstName");
+        CompositeBean bean = new CompositeBean();
+        bean.setSimple(null);
 
-        // This will be a no-op due to the null property in the expression
+        assertThrows(NullPointerException.class, () -> normal.set(bean, "Howard"));
+    }
+
+    @Test
+    void question_dot_operator_write_is_a_no_op_for_null_object()
+    {
+        PropertyConduit smart = source.create(CompositeBean.class, "simple?.firstName");
+        CompositeBean bean = new CompositeBean();
+        bean.setSimple(null);
 
         smart.set(bean, "Howard");
+
+        assertNull(bean.getSimple());
     }
 
-    static class GenericBean {
+    static class GenericBean
+    {
         public List<Date> dates;
         public List<GenericBean> genericBeans;
-        
-        public List<Long> getLongs() {
+
+        public List<Long> getLongs()
+        {
             return Collections.emptyList();
         }
-        
-        public void setMap(Map<String, Integer> map) {
+
+        public void setMap(Map<String, Integer> map)
+        {
         }
     }
-    
+
     @Test
-    public void generic_types_are_determined()
+    void generic_types_are_determined()
     {
         PropertyConduit2 datesConduit = (PropertyConduit2) source.create(GenericBean.class, "dates");
         PropertyConduit2 longsConduit = (PropertyConduit2) source.create(GenericBean.class, "longs");
         PropertyConduit2 nestedDatesConduit = (PropertyConduit2) source.create(GenericBean.class, "genericBeans.get(0).dates");
         PropertyConduit2 mapConduit = (PropertyConduit2) source.create(GenericBean.class, "map");
-        assertEquals(datesConduit.getPropertyGenericType().toString(), "java.util.List<java.util.Date>");
-        assertEquals(longsConduit.getPropertyGenericType().toString(), "java.util.List<java.lang.Long>");
-        assertEquals(nestedDatesConduit.getPropertyGenericType().toString(), "java.util.List<java.util.Date>");
-        assertEquals(mapConduit.getPropertyGenericType().toString(), "java.util.Map<java.lang.String, java.lang.Integer>");
+        assertEquals("java.util.List<java.util.Date>", datesConduit.getPropertyGenericType().toString());
+        assertEquals("java.util.List<java.lang.Long>", longsConduit.getPropertyGenericType().toString());
+        assertEquals("java.util.List<java.util.Date>", nestedDatesConduit.getPropertyGenericType().toString());
+        assertEquals("java.util.Map<java.lang.String, java.lang.Integer>", mapConduit.getPropertyGenericType().toString());
     }
-    
+
     @Test
-    public void method_names_are_matched_caselessly()
+    void method_names_are_matched_caselessly()
     {
         InternalPropertyConduit conduit = (InternalPropertyConduit) source.create(CompositeBean.class,
                 "GETSIMPLE().firstName");
 
-        assertEquals(conduit.getPropertyName(), "firstName");
+        assertEquals("firstName", conduit.getPropertyName());
 
         CompositeBean bean = new CompositeBean();
         SimpleBean inner = new SimpleBean();
@@ -206,11 +238,11 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         conduit.set(bean, "Howard");
 
-        assertEquals(inner.getFirstName(), "Howard");
+        assertEquals("Howard", inner.getFirstName());
     }
 
     @Test
-    public void generics()
+    void generics()
     {
         String string = "surprise";
         StringHolder stringHolder = new StringHolder();
@@ -220,9 +252,9 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         PropertyConduit conduit = source.create(StringHolderBean.class, "value.get()");
 
-        assertSame(conduit.get(bean), string);
+        assertSame(string, conduit.get(bean));
 
-        assertSame(conduit.getPropertyType(), String.class);
+        assertSame(String.class, conduit.getPropertyType());
     }
 
     public static class One<A, B>
@@ -366,7 +398,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void generic_properties()
+    void generic_properties()
     {
         final WithGenericProperties bean = new WithGenericProperties();
         final String first = "John";
@@ -378,19 +410,11 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         bean.holder.put(simple);
 
         PropertyConduit conduit = source.create(WithGenericProperties.class, "holder.get().firstName");
-        assertSame(conduit.get(bean), first);
+        assertSame(first, conduit.get(bean));
     }
 
-    @Test
-    public void generic_parameterized_base_with_properties()
+    private static RealizedParameters realizedParameters(SimpleBean simple)
     {
-        final String first = "John";
-        final String last = "Doe";
-        final SimpleBean simple = new SimpleBean();
-        simple.setAge(2);
-        simple.setFirstName(first);
-        simple.setLastName(last);
-
         final RealizedParameters bean = new RealizedParameters();
         final Holder<SimpleBean> holder = new Holder<SimpleBean>();
         holder.put(simple);
@@ -400,42 +424,96 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         bean.type2Field = 5678L;
         bean.type2ArrayField = new Long[]
                 {123L, 456L};
+        return bean;
+    }
 
-        PropertyConduit conduit = source.create(RealizedParameters.class, "type1property.get().firstName");
-        assertSame(conduit.get(bean), first);
-        conduit.set(bean, "Change");
-        assertSame(conduit.get(bean), "Change");
-        conduit.set(bean, first);
-
-        conduit = source.create(RealizedParameters.class, "type1field.get().firstName");
-        assertSame(conduit.get(bean), first);
-
-        conduit = source.create(RealizedParameters.class, "type2field");
-        assertEquals(conduit.get(bean), bean.type2Field);
-
-        conduit = source.create(RealizedParameters.class, "type2property");
-        assertEquals(conduit.get(bean), bean.getType2Property());
-
-        conduit = source.create(RealizedParameters.class, "type2ArrayField");
-        assertEquals(conduit.get(bean), bean.type2ArrayField);
-
+    private static SimpleBean john()
+    {
+        final SimpleBean simple = new SimpleBean();
+        simple.setAge(2);
+        simple.setFirstName("John");
+        simple.setLastName("Doe");
+        return simple;
     }
 
     @Test
-    public void generic_interface()
+    void generic_parameterized_base_property_is_read()
+    {
+        SimpleBean simple = john();
+        RealizedParameters bean = realizedParameters(simple);
+
+        PropertyConduit conduit = source.create(RealizedParameters.class, "type1property.get().firstName");
+
+        assertSame(simple.getFirstName(), conduit.get(bean));
+    }
+
+    @Test
+    void generic_parameterized_base_property_is_written()
+    {
+        RealizedParameters bean = realizedParameters(john());
+        PropertyConduit conduit = source.create(RealizedParameters.class, "type1property.get().firstName");
+
+        conduit.set(bean, "Change");
+
+        assertSame("Change", conduit.get(bean));
+    }
+
+    @Test
+    void generic_parameterized_base_field_is_read()
+    {
+        SimpleBean simple = john();
+        RealizedParameters bean = realizedParameters(simple);
+
+        PropertyConduit conduit = source.create(RealizedParameters.class, "type1field.get().firstName");
+
+        assertSame(simple.getFirstName(), conduit.get(bean));
+    }
+
+    @Test
+    void generic_parameterized_base_type_variable_field_is_read()
+    {
+        RealizedParameters bean = realizedParameters(john());
+
+        PropertyConduit conduit = source.create(RealizedParameters.class, "type2field");
+
+        assertEquals(bean.type2Field, conduit.get(bean));
+    }
+
+    @Test
+    void generic_parameterized_base_type_variable_property_is_read()
+    {
+        RealizedParameters bean = realizedParameters(john());
+
+        PropertyConduit conduit = source.create(RealizedParameters.class, "type2property");
+
+        assertEquals(bean.getType2Property(), conduit.get(bean));
+    }
+
+    @Test
+    void generic_parameterized_base_type_variable_array_field_is_read()
+    {
+        RealizedParameters bean = realizedParameters(john());
+
+        PropertyConduit conduit = source.create(RealizedParameters.class, "type2ArrayField");
+
+        assertEquals(bean.type2ArrayField, conduit.get(bean));
+    }
+
+    @Test
+    void generic_interface()
     {
         final WithRealizedGenericInterface bean = new WithRealizedGenericInterface();
         bean.a = "Hello";
         bean.b = 12345L;
 
         PropertyConduit conduit = source.create(WithRealizedGenericInterface.class, "genericA()");
-        assertSame(conduit.get(bean), "Hello");
+        assertSame("Hello", conduit.get(bean));
         conduit = source.create(WithRealizedGenericInterface.class, "genericB()");
-        assertEquals(conduit.get(bean), 12345L);
+        assertEquals(12345L, conduit.get(bean));
     }
 
     @Test
-    public void generic_nested()
+    void generic_nested()
     {
         Three bean = new Three();
         bean.setA("hello");
@@ -444,45 +522,36 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         bean.setX(54321L);
 
         PropertyConduit conduit = source.create(Three.class, "a");
-        assertSame(conduit.get(bean), "hello");
+        assertSame("hello", conduit.get(bean));
     }
 
     @Test
-    public void null_root_object()
+    void null_root_object()
     {
         PropertyConduit conduit = source.create(StringHolderBean.class, "value.get()");
 
-        try
-        {
-            conduit.get(null);
-            unreachable();
-        } catch (NullPointerException ex)
-        {
-            assertEquals(ex.getMessage(), "Root object of property expression 'value.get()' is null.");
-        }
+        NullPointerException ex = assertThrows(NullPointerException.class, () -> conduit.get(null));
+
+        assertEquals("Root object of property expression 'value.get()' is null.", ex.getMessage());
     }
 
     @Test
-    public void null_property_in_chain()
+    void null_property_in_chain()
     {
         PropertyConduit conduit = source.create(CompositeBean.class, "simple.lastName");
 
         CompositeBean bean = new CompositeBean();
         bean.setSimple(null);
 
-        try
-        {
-            conduit.get(bean);
-            unreachable();
-        } catch (NullPointerException ex)
-        {
-            assertMessageContains(ex, "Property 'simple' (within property expression 'simple.lastName', of",
-                    ") is null.");
-        }
+        NullPointerException ex = assertThrows(NullPointerException.class, () -> conduit.get(bean));
+
+        assertTrue(ex.getMessage().contains("Property 'simple' (within property expression 'simple.lastName', of"),
+                ex.getMessage());
+        assertTrue(ex.getMessage().contains(") is null."), ex.getMessage());
     }
 
     @Test
-    public void last_term_may_be_null()
+    void last_term_may_be_null()
     {
         PropertyConduit conduit = source.create(CompositeBean.class, "simple.firstName");
 
@@ -494,7 +563,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void field_annotations_are_visible()
+    void field_annotations_are_visible()
     {
         PropertyConduit conduit = source.create(CompositeBean.class, "simple.firstName");
 
@@ -502,11 +571,11 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         assertNotNull(annotation);
 
-        assertEquals(annotation.value(), "required");
+        assertEquals("required", annotation.value());
     }
 
     @Test
-    public void method_invocation_with_integer_arguments()
+    void method_invocation_with_integer_arguments()
     {
         PropertyConduit conduit = source.create(EchoBean.class, "echoInt(storedInt, 3)");
         EchoBean bean = new EchoBean();
@@ -514,12 +583,12 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         for (int i = 0; i < 10; i++)
         {
             bean.setStoredInt(i);
-            assertEquals(conduit.get(bean), Integer.valueOf(i * 3));
+            assertEquals(Integer.valueOf(i * 3), conduit.get(bean));
         }
     }
 
     @Test
-    public void method_invocation_with_double_argument()
+    void method_invocation_with_double_argument()
     {
         PropertyConduit conduit = source.create(EchoBean.class, "echoDouble(storedDouble, 2.0)");
         EchoBean bean = new EchoBean();
@@ -528,22 +597,22 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         bean.setStoredDouble(value);
 
-        assertEquals(conduit.get(bean), Double.valueOf(2. * value));
+        assertEquals(Double.valueOf(2. * value), conduit.get(bean));
     }
 
     @Test
-    public void method_invocation_with_string_argument()
+    void method_invocation_with_string_argument()
     {
         PropertyConduit conduit = source.create(EchoBean.class, "echoString(storedString, 'B4', 'AFTER')");
         EchoBean bean = new EchoBean();
 
         bean.setStoredString("Moe");
 
-        assertEquals(conduit.get(bean), "B4 - Moe - AFTER");
+        assertEquals("B4 - Moe - AFTER", conduit.get(bean));
     }
 
     @Test
-    public void method_invocation_using_dereference()
+    void method_invocation_using_dereference()
     {
         PropertyConduit conduit = source.create(EchoBean.class, "echoString(storedString, stringSource.value, 'beta')");
         EchoBean bean = new EchoBean();
@@ -553,11 +622,11 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         bean.setStringSource(source);
         bean.setStoredString("Barney");
 
-        assertEquals(conduit.get(bean), "alpha - Barney - beta");
+        assertEquals("alpha - Barney - beta", conduit.get(bean));
     }
 
     @Test
-    public void top_level_list()
+    void top_level_list()
     {
         PropertyConduit conduit = source.create(EchoBean.class, "[ 1, 2.0, storedString ]");
         EchoBean bean = new EchoBean();
@@ -566,11 +635,11 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         List l = (List) conduit.get(bean);
 
-        assertListsEquals(l, Long.valueOf(1), Double.valueOf(2.0), "Lisa");
+        assertEquals(Arrays.asList(Long.valueOf(1), Double.valueOf(2.0), "Lisa"), l);
     }
 
     @Test
-    public void empty_list()
+    void empty_list()
     {
         PropertyConduit conduit = source.create(EchoBean.class, "[  ]");
         EchoBean bean = new EchoBean();
@@ -579,11 +648,11 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         List l = (List) conduit.get(bean);
 
-        assertEquals(l.size(), 0);
+        assertEquals(0, l.size());
     }
 
     @Test
-    public void list_as_method_argument()
+    void list_as_method_argument()
     {
         PropertyConduit conduit = source.create(EchoBean.class, "echoList([ 1, 2.0, storedString ])");
         EchoBean bean = new EchoBean();
@@ -592,11 +661,11 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         List l = (List) conduit.get(bean);
 
-        assertListsEquals(l, Long.valueOf(1), Double.valueOf(2.0), "Bart");
+        assertEquals(Arrays.asList(Long.valueOf(1), Double.valueOf(2.0), "Bart"), l);
     }
 
     @Test
-    public void arrays_as_method_argument()
+    void arrays_as_method_argument()
     {
         PropertyConduit conduit = source.create(EchoBean.class, "echoArray(storedArray)");
         EchoBean bean = new EchoBean();
@@ -608,12 +677,14 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         Number[][] array = (Number[][]) conduit.get(bean);
 
-        assertArraysEqual(array[0], 1, 2);
-        assertArraysEqual(array[1], 3.0, 4.0);
+        assertArrayEquals(new Number[]
+                {1, 2}, array[0]);
+        assertArrayEquals(new Number[]
+                {3.0, 4.0}, array[1]);
     }
 
     @Test
-    public void top_level_map()
+    void top_level_map()
     {
         PropertyConduit conduit = source.create(EchoBean.class, "{'one': true, 'two': 2.0, stringSource.value: 3, 'four': storedString}");
         EchoBean bean = new EchoBean();
@@ -622,25 +693,24 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         bean.setStringSource(new StringSource("three"));
 
         Map actual = (Map) conduit.get(bean);
-        assertEquals(actual.get("one"), true);
-        assertEquals(actual.get("two"), 2.0);
-        assertEquals(actual.get("three"), 3L);
-        assertEquals(actual.get("four"), "four");
+        assertEquals(true, actual.get("one"));
+        assertEquals(2.0, actual.get("two"));
+        assertEquals(3L, actual.get("three"));
+        assertEquals("four", actual.get("four"));
     }
 
     @Test
-    public void empty_map()
+    void empty_map()
     {
         PropertyConduit conduit = source.create(EchoBean.class, "{ }");
         EchoBean bean = new EchoBean();
         Map m = (Map) conduit.get(bean);
 
         assertTrue(m.isEmpty());
-
     }
 
     @Test
-    public void map_as_method_argument()
+    void map_as_method_argument()
     {
         PropertyConduit conduit = source.create(EchoBean.class, "echoMap({ 1: 'one', 2.0: 'two', storedString: stringSource.value })");
         EchoBean bean = new EchoBean();
@@ -652,41 +722,40 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         assertEquals("one", m.get(1L));
         assertEquals("two", m.get(2.0));
         assertEquals("three", m.get("3"));
-
     }
 
     @Test
-    public void not_operator()
+    void not_operator()
     {
         PropertyConduit conduit = source.create(IntegerHolder.class, "! value");
         IntegerHolder holder = new IntegerHolder();
 
-        assertEquals(conduit.get(holder), Boolean.TRUE);
+        assertEquals(Boolean.TRUE, conduit.get(holder));
 
         holder.setValue(99);
 
-        assertEquals(conduit.get(holder), Boolean.FALSE);
+        assertEquals(Boolean.FALSE, conduit.get(holder));
     }
 
     @Test
-    public void not_operator_in_subexpression()
+    void not_operator_in_subexpression()
     {
         PropertyConduit conduit = source.create(Switch.class, "label(! value)");
 
         Switch sw = new Switch();
 
-        assertEquals(conduit.get(sw), "aye");
+        assertEquals("aye", conduit.get(sw));
 
         sw.setValue(true);
 
-        assertEquals(conduit.get(sw), "nay");
+        assertEquals("nay", conduit.get(sw));
     }
 
     /**
      * TAP5-330
      */
     @Test
-    public void object_methods_can_be_invoked()
+    void object_methods_can_be_invoked()
     {
         PropertyConduit conduit = source.create(Block.class, "toString()");
 
@@ -699,69 +768,59 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
             }
         };
 
-        assertEquals(conduit.get(b), "Do You Grok Ze Block?");
+        assertEquals("Do You Grok Ze Block?", conduit.get(b));
     }
 
     @Test
-    public void parse_error_in_property_expression()
+    void parse_error_in_property_expression()
     {
-        try
-        {
-            source.create(IntegerHolder.class, "getValue(");
-            unreachable();
-        } catch (RuntimeException ex)
-        {
-            //note that addition of map support changed how this expression was parsed such that the error is now
-            //reported at character 8, (, rather than 0: getValue(.
-            assertEquals(ex.getMessage(),
-                    "Error parsing property expression 'getValue(': line 1:8 no viable alternative at input '('.");
-        }
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> source.create(IntegerHolder.class, "getValue("));
+
+        //note that addition of map support changed how this expression was parsed such that the error is now
+        //reported at character 8, (, rather than 0: getValue(.
+        assertEquals("Error parsing property expression 'getValue(': line 1:8 no viable alternative at input '('.",
+                ex.getMessage());
     }
 
     @Test
-    public void lexer_error_in_property_expression()
+    void lexer_error_in_property_expression()
     {
-        try
-        {
-            source.create(IntegerHolder.class, "fred #");
-            unreachable();
-        } catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(),
-                    "Error parsing property expression 'fred #': Unable to parse input at character position 6.");
-        }
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> source.create(IntegerHolder.class, "fred #"));
+
+        assertEquals("Error parsing property expression 'fred #': Unable to parse input at character position 6.",
+                ex.getMessage());
     }
 
     @Test
-    public void boolean_constant_as_method_parameter()
+    void boolean_constant_as_method_parameter()
     {
         Bedrock bedrock = new Bedrock();
 
         PropertyConduit trueConduit = source.create(Bedrock.class, "toName(true)");
         PropertyConduit falseConduit = source.create(Bedrock.class, "toName(false)");
 
-        assertEquals(trueConduit.get(bedrock), "Fred");
-        assertEquals(falseConduit.get(bedrock), "Barney");
+        assertEquals("Fred", trueConduit.get(bedrock));
+        assertEquals("Barney", falseConduit.get(bedrock));
     }
 
     /**
      * TAP5-747
      */
     @Test
-    public void dereference_result_of_method_invocation()
+    void dereference_result_of_method_invocation()
     {
         ComplexObject co = new ComplexObject();
         PropertyConduit pc = source.create(ComplexObject.class, "get(nestedIndex).name");
 
-        assertEquals(pc.get(co), "zero");
+        assertEquals("zero", pc.get(co));
 
         co.setNestedIndex(1);
 
-        assertEquals(pc.get(co), "one");
+        assertEquals("one", pc.get(co));
     }
 
     @Test
-    public void public_object_field()
+    void public_object_field()
     {
         PublicFieldBean bean = new PublicFieldBean();
 
@@ -769,15 +828,15 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         PropertyConduit pc = source.create(PublicFieldBean.class, "stringField");
 
-        assertEquals(pc.get(bean), "x");
+        assertEquals("x", pc.get(bean));
 
         pc.set(bean, "y");
 
-        assertEquals(bean.stringField, "y");
+        assertEquals("y", bean.stringField);
     }
 
     @Test
-    public void navigate_through_public_field()
+    void navigate_through_public_field()
     {
         PublicFieldBean bean = new PublicFieldBean();
         PublicFieldBeanHolder holder = new PublicFieldBeanHolder(bean);
@@ -786,15 +845,15 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         PropertyConduit pc = source.create(PublicFieldBeanHolder.class, "bean.stringField");
 
-        assertEquals(pc.get(holder), "x");
+        assertEquals("x", pc.get(holder));
 
         pc.set(holder, "y");
 
-        assertEquals(bean.stringField, "y");
+        assertEquals("y", bean.stringField);
     }
 
     @Test
-    public void public_primitive_field()
+    void public_primitive_field()
     {
         PublicFieldBean bean = new PublicFieldBean();
 
@@ -804,15 +863,15 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         PropertyConduit pc = source.create(PublicFieldBean.class, "IntField");
 
-        assertEquals(pc.get(bean), Integer.valueOf(99));
+        assertEquals(Integer.valueOf(99), pc.get(bean));
 
         pc.set(bean, 37);
 
-        assertEquals(bean.intField, 37);
+        assertEquals(37, bean.intField);
     }
 
     @Test
-    public void annotation_of_public_field()
+    void annotation_of_public_field()
     {
         PropertyConduit pc = source.create(PublicFieldBean.class, "StringField");
 
@@ -823,7 +882,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
      * TAP5-1555
      */
     @Test
-    public void this_and_null_inside_array()
+    void this_and_null_inside_array()
     {
         PropertyConduit pc = source.create(NonVisualBean.class, "[this, null]");
 
@@ -831,8 +890,8 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         List list = (List) pc.get(bean);
 
-        assertEquals(list.size(), 2);
-        assertSame(list.get(0), bean);
+        assertEquals(2, list.size());
+        assertSame(bean, list.get(0));
         assertNull(list.get(1));
     }
 
@@ -840,35 +899,31 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
      * TAP5-1673
      */
     @Test
-    public void public_static_fields_are_accessible()
+    void public_static_fields_are_accessible()
     {
         PropertyConduit pc = source.create(PublicStaticFieldBean.class, "value");
 
-        assertSame(pc.get(null), PublicStaticFieldBean.VALUE);
+        assertSame(PublicStaticFieldBean.VALUE, pc.get(null));
 
         pc.set(null, "new-value");
 
-        assertEquals(PublicStaticFieldBean.VALUE, "new-value");
+        assertEquals("new-value", PublicStaticFieldBean.VALUE);
     }
 
     @Test
-    public void final_static_fields_are_read_only()
+    void final_static_fields_are_read_only()
     {
         PropertyConduit pc = source.create(PublicStaticFieldBean.class, "read_only");
 
-        try
-        {
-            pc.set(null, "new-value");
-            unreachable();
-        } catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(),
-                    "Expression 'read_only' for class org.apache.tapestry5.internal.services.PublicStaticFieldBean is read-only.");
-        }
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> pc.set(null, "new-value"));
+
+        assertEquals(
+                "Expression 'read_only' for class org.apache.tapestry5.internal.services.PublicStaticFieldBean is read-only.",
+                ex.getMessage());
     }
 
     @Test
-    public void public_static_field_in_an_array()
+    void public_static_field_in_an_array()
     {
         PropertyConduit pc = source.create(PublicStaticFieldBean.class, "[read_only]");
 
@@ -876,32 +931,32 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         List<String> actual = (List<String>) pc.get(new PublicStaticFieldBean());
 
-        assertListsEquals(actual, PublicStaticFieldBean.READ_ONLY);
+        assertEquals(Collections.singletonList(PublicStaticFieldBean.READ_ONLY), actual);
     }
-    
+
     // TAP5-1493
     @Test
-    public void covariant_property_return_type() {
-
+    void covariant_property_return_type()
+    {
         // example from Howard
-        try {
-            assertConduitPropertyType(Foo.class, "bar", Bar.class);
-        } catch (AssertionError e) {
-            List<Method> matches = CollectionFactory.newList();
-            for (Method method : Foo.class.getMethods()) {
-                if (method.getName().equals("getBar")) {
-                    matches.add(method);
-                }
-            }
-            fail(String.format("%s (possible candidates %s)", e.getMessage(), matches)); 
-        }
-        assertConduitPropertyType(AbstractFoo.class, "bar", AbstractBar.class);
-        
-        // example from Robert
-        assertConduitPropertyType(RobertMyClass.class, "foo.robertBarValue", int.class);
-        
+        assertSame(Bar.class, source.create(Foo.class, "bar").getPropertyType());
     }
-    
+
+    // TAP5-1493
+    @Test
+    void abstract_property_return_type()
+    {
+        assertSame(AbstractBar.class, source.create(AbstractFoo.class, "bar").getPropertyType());
+    }
+
+    // TAP5-1493
+    @Test
+    void covariant_property_return_type_through_interfaces()
+    {
+        // example from Robert
+        assertSame(int.class, source.create(RobertMyClass.class, "foo.robertBarValue").getPropertyType());
+    }
+
     // TAP5-1493
     public static abstract class AbstractBar
     {
@@ -960,9 +1015,5 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         {
             return null;
         }
-    }
-    
-    private void assertConduitPropertyType(Class<?> origin, String property, Class<?> expectedType) {
-        assertEquals(expectedType, source.create(origin, property).getPropertyType());
     }
 }
