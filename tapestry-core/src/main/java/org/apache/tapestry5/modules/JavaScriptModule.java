@@ -579,8 +579,8 @@ public class JavaScriptModule
         
         final Resource moment = assetSource.getClasspathAsset("/META-INF/assets/tapestry5/moment.js")
                 .getResource();
-        configuration.add("t5/core/moment", new EsShim(moment)
-                .defaultExport("moment")
+        configuration.add("moment", new EsShim(moment)
+                .defaultExport("window.moment")
                 .getResource());
         
         if (compatibility.enabled(Trait.BOOTSTRAP_3))
