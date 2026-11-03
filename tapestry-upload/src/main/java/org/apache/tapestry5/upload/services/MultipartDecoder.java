@@ -40,7 +40,7 @@ public interface MultipartDecoder
     HttpServletRequest decode(HttpServletRequest request);
 
     /**
-     * Returns the exception the occured during the file upload, or null if the processing of the multipart upload
+     * Returns the exception that occurred during the file upload, or null if the processing of the multipart upload
      * stream was succesful.
      */
     FileUploadException getUploadException();

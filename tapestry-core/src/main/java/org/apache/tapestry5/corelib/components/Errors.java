@@ -141,7 +141,7 @@ public class Errors
 
     /**
      * Hook to set up JavaScript, specifically for handling the close button.
-     * Method intended to be overriden when Bootstrap isn't being used.
+     * Method intended to be overridden when Bootstrap isn't being used.
      * This implementation calls <code>javaScriptSupport.require("bootstrap/alert");</code>.
      * @since 5.5
      * @see ComponentOverride
