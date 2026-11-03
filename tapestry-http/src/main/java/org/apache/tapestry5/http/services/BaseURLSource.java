@@ -24,7 +24,7 @@ import org.apache.tapestry5.ioc.services.ServiceOverride;
  * necessary to do a bit more, since <code>getServerName()</code> will often be the name of the internal server (not
  * visible to the client web browser), and a hard-coded name of a server that <em>is</em> visible to the web browser
  * is needed. Further, in testing, non-default ports are often used. In those cases, an overriding contribution to the
- * {@link ServiceOverride} service will allow a custom implementation to supercede the default version. You may also
+ * {@link ServiceOverride} service will allow a custom implementation to supersede the default version. You may also
  * contribute application specific values for the following {@link org.apache.tapestry5.SymbolConstants}:
  * {@link org.apache.tapestry5.http.TapestryHttpSymbolConstants#HOSTNAME}, {@link org.apache.tapestry5.http.TapestryHttpSymbolConstants#HOSTPORT} and 
  * {@link org.apache.tapestry5.http.TapestryHttpSymbolConstants#HOSTPORT_SECURE} to alter the behavior of the default BaseURLSource 

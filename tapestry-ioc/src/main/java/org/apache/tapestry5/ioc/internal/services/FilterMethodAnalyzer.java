@@ -41,7 +41,7 @@ public class FilterMethodAnalyzer
 
         // TODO: check compatible exceptions!
 
-        // This needs work; it assumes the first occurance of the service interface
+        // This needs work; it assumes the first occurrence of the service interface
         // in the filter interface method signature is the right match. That will suit
         // most of the time.
 

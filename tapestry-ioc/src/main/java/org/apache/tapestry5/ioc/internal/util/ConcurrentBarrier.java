@@ -83,7 +83,7 @@ public class ConcurrentBarrier
      * and acquiring the write lock, it is entirely possible that some other thread will sneak in and do some work,
      * so the {@link Invokable} object should be prepared for cases where the state has changed slightly, despite
      * holding the read lock. This usually manifests as race conditions where either a) some parallel unrelated
-     * bit of work has occured or b) duplicate work has occured. The latter is only problematic if the operation
+     * bit of work has occurred or b) duplicate work has occurred. The latter is only problematic if the operation
      * is very expensive.
      *
      * @param <T>       the type of the return value

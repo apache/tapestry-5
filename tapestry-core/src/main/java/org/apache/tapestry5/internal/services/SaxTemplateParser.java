@@ -573,7 +573,7 @@ public class SaxTemplateParser
                     processTextBuffer(state);
 
                     // Restore everthing to how it was before the
-                    // extention-point was reached.
+                    // extension-point was reached.
 
                     tokenAccumulator = savedTokenAccumulator;
                     return;

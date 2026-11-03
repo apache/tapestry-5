@@ -59,7 +59,7 @@ public class Tuple<A, B>
     }
 
     /**
-     * Overriden in subclasses to write additional values into the
+     * Overridden in subclasses to write additional values into the
      * description.
      * 
      * @param builder
