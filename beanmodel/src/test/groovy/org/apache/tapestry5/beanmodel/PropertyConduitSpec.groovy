@@ -311,16 +311,16 @@ class PropertyConduitSpec extends Specification {
     // ANTLR is more open for numeric literals, but PropertyConduit might
     // normalize these, so checking is a little more involved.
     if (expectedType == double.class && result instanceof Float) {
-      (result as Float).toDouble() == (expectedValue as Double)
+      assert (result as Float).toDouble() == (expectedValue as Double)
     } else {
-      result.getClass() == expectedValue.getClass()
+      assert result.getClass() == expectedValue.getClass()
     }
     conduitType == expectedType
 
     where:
     expression | expectedValue | expectedType
-    "123"      | 123           | Long.class
-    "-45"      | -45           | Long.class
+    "123"      | 123L          | Long.class
+    "-45"      | -45L          | Long.class
     "1.23"     | 1.23d         | Double.class
     "-.5"      | -0.5d         | Double.class
     "'hello'"  | "hello"       | String.class
