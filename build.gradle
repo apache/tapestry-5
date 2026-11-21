@@ -11,7 +11,7 @@ description = 'Apache Tapestry 5 Project'
 
 ext {
     tapestryMajorVersion = '5.10.0'
-    tapestryMinorVersion = '' // Use for release suffixes like '-alpha-1'
+    tapestryMinorVersion = '-rc-1' // Use for release suffixes like '-alpha-1'
 
     artifactSuffix = ''
 
